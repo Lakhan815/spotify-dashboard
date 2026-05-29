@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl =  env("DIRECT_URL")
+
+}
+
+model User {
+  id String @id 
+  name String
+  email String @unique //dont want 2 ppl with the same email
+  createdAt DateTime @default(now())
+  listeningSession ListeningSession[]
+}
+
+model Track {
+  id String @id
+  name String
+  length Int
+  artist Artist @relation(fields: [artistId], references: [id])
+  artistId String
+  album String
+  listeningSession ListeningSession[]
+}
+
+model Artist {
+  id String @id
+  name String
+  track Track[] 
+}
+
+model Genre {
+  id String @id
+  name String
+}
+
+model ListeningSession {
+  id String @id
+  user User @relation(fields: [userId], references: [id])
+  userId String
+  track Track @relation(fields: [trackId], references: [id])
+  trackId String
+  played DateTime
+}
