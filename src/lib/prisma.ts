@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../generated/prisma";
 
 // its not good to do it like this becaues nextjs restarts a lot and this could cause a lot of database calls
 // const prisma = new PrismaClient();
