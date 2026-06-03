@@ -9,6 +9,11 @@ export const authOptions: AuthOptions = {
       //add exclaimation points to the end of the env ids so typescript knows it exists
       clientId: process.env.SPOTIFY_CLIENT_ID!,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: "user-top-read user-read-recently-played user-read-email",
+        },
+      },
     }),
   ],
 
