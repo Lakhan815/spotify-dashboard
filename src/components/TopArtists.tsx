@@ -17,7 +17,7 @@ export default function TopArtists({ artists }: Props) {
     >
       <img src={artist.images[0].url} alt={artist.name} />
       <p>{artist.name}</p>
-      <p>{artist.genres.join(", ")}</p>
+      <p>{(artist.genres || []).join(", ")}</p>
     </li>
   ));
   return (
