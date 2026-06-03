@@ -22,7 +22,7 @@ export default function TopTracks({ tracks }: Props) {
   const topTracks = tracks.map((track) => (
     <li
       key={track.id}
-      className="flex flex-col p-2 rounded-lgborder border-white/20"
+      className="flex flex-col p-2 rounded-lg border border-white/50"
     >
       <img src={track.album.images[0].url} alt={track.album.name} />
       <p>{track.name}</p>
@@ -30,7 +30,7 @@ export default function TopTracks({ tracks }: Props) {
     </li>
   ));
   return (
-    <div className="flex justify-center px-8 pt-8 w-full md:w-1/2">
+    <div className="flex justify-center px-8 pt-8 ">
       <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 rounded-lg">
         {topTracks}
       </ul>
