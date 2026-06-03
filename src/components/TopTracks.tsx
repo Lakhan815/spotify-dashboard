@@ -1,3 +1,5 @@
+//sets up the interfaces:
+//this interface reflects the format the data is outputted from the spotify API
 interface Track {
   id: string;
   name: string;
@@ -13,11 +15,12 @@ interface Album {
   name: string;
   images: { url: string }[];
 }
-
+//this is where the data from page.tsx goes
 interface Props {
   tracks: Track[];
 }
 
+//actually displaying the tracks
 export default function TopTracks({ tracks }: Props) {
   const topTracks = tracks.map((track) => (
     <li

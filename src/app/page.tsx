@@ -1,22 +1,15 @@
 "use client";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { data: session } = useSession();
-  const router = useRouter();
-
-  if (session) {
-    router.push("/dashboard");
-  }
-
   return (
     <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
           {session ? (
-            <p className="flex h-12 items-center px-5 text-[#21000e]">
+            <p className="flex h-12 items-center px-5 text-[#21000e] drop-shadow-[0_0_8px_#ff0044]">
               Signed in as {session.user?.name}!
             </p>
           ) : (

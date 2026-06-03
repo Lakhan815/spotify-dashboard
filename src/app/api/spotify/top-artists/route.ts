@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { getTopTracks } from "@/lib/spotify";
+import { getTopArtists } from "@/lib/spotify";
 import { authOptions } from "@/lib/auth";
 //whenever I fetch smth, this is where it goes
 export async function GET() {
@@ -11,6 +11,6 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   //if they are logged in, take there access token and call it from Spotify
-  const tracks = await getTopTracks(session.accessToken!);
-  return NextResponse.json(tracks);
+  const artists = await getTopArtists(session.accessToken!);
+  return NextResponse.json(artists);
 }
