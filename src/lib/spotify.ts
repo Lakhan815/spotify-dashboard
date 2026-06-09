@@ -1,8 +1,9 @@
 //private helper to reduce redundancy in the functions.
 //takes a spotify URL and an access token and makes the request with the proper header and returns a JSON
 //The "Bearer" is what spotify needs to know its legit
-async function spotifyFetch(url: string, accessToken: string) {
-  const response = await fetch(url, {
+async function spotifyFetch(url: string, accessToken: string, range?: string) {
+  const fullUrl = range ? url + "?time_range=" + range : url;
+  const response = await fetch(fullUrl, {
     headers: {
       authorization: "Bearer " + accessToken,
     },
@@ -11,12 +12,20 @@ async function spotifyFetch(url: string, accessToken: string) {
   return data;
 }
 //you get the access token from getTopTracks
-export async function getTopTracks(accessToken: string) {
-  return spotifyFetch("https://api.spotify.com/v1/me/top/tracks", accessToken);
+export async function getTopTracks(accessToken: string, range: string) {
+  return spotifyFetch(
+    "https://api.spotify.com/v1/me/top/tracks",
+    accessToken,
+    range,
+  );
 }
 
-export async function getTopArtists(accessToken: string) {
-  return spotifyFetch("https://api.spotify.com/v1/me/top/artists", accessToken);
+export async function getTopArtists(accessToken: string, range: string) {
+  return spotifyFetch(
+    "https://api.spotify.com/v1/me/top/artists",
+    accessToken,
+    range,
+  );
 }
 
 export async function getRecentlyPlayed(accessToken: string) {
