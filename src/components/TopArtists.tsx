@@ -15,7 +15,7 @@ export default function TopArtists({ artists }: Props) {
       key={artist.id}
       className="flex flex-col p-2 rounded-lg border border-white/50"
     >
-      <img src={artist.images[0].url} alt={artist.name} />
+      <img src={artist.images?.[0]?.url} alt={artist.name} />
       <p>{artist.name}</p>
       <p>{(artist.genres || []).join(", ")}</p>
     </li>

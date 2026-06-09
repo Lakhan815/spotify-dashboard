@@ -27,7 +27,7 @@ export default function TopTracks({ tracks }: Props) {
       key={track.id}
       className="flex flex-col p-2 rounded-lg border border-white/50"
     >
-      <img src={track.album.images[0].url} alt={track.album.name} />
+      <img src={track.album.images?.[0]?.url} alt={track.album.name} />{" "}
       <p>{track.name}</p>
       <p>{track.artists.map((a) => a.name).join(", ")}</p>
     </li>
