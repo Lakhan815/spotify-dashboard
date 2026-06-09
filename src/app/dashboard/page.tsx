@@ -39,17 +39,22 @@ export default function Dashboard() {
   //this is what sends the track data into TopTracks.tsx
   return (
     <div>
-      <div>
-        <button onClick={() => setTimeRange("short_term")}>Last 4 Weeks</button>
-        <button onClick={() => setTimeRange("medium_term")}>
-          Last 6 Months
-        </button>
-        <button onClick={() => setTimeRange("long_term")}>All Time</button>
-      </div>
-      <hr />
-      <div>
-        <button onClick={() => setSelection("tracks")}>Top Tracks</button>
-        <button onClick={() => setSelection("artists")}>Top Artists</button>
+      <div className="flex justify-between items-center px-8 pt-8 relative p-0.5 overflow-hidden text-sm font-medium text-heading rounded-base group bg-gradient-to-br from-teal-300 to-[#363636]-300 group-hover:from-teal-300 group-hover:to-[#363636]-300 dark:text-white dark:hover:text-heading focus:ring-4 focus:outline-none focus:ring-[#363636]-200 dark:focus:ring-lime-800">
+        <span className=" relative px-4 py-2.5 transition-all ease-in duration-75 bg-neutral-primary-soft rounded-base group-hover:bg-transparent group-hover:dark:bg-transparent leading-5">
+          <div className="flex gap-2">
+            <button onClick={() => setTimeRange("short_term")}>
+              Last 4 Weeks
+            </button>
+            <button onClick={() => setTimeRange("medium_term")}>
+              Last 6 Months
+            </button>
+            <button onClick={() => setTimeRange("long_term")}>All Time</button>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => setSelection("tracks")}>Top Tracks</button>
+            <button onClick={() => setSelection("artists")}>Top Artists</button>
+          </div>
+        </span>
       </div>
       <hr />
       {selection === "tracks" && <TopTracks tracks={tracks} />}
