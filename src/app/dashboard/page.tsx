@@ -6,8 +6,8 @@ import TopArtists from "@/components/TopArtists";
 
 export default function Dashboard() {
   //makes the array of top tracks
-  const [tracks, setTracks] = useState([]);
-  const [artists, setArtists] = useState([]);
+  const [tracks, setTracks] = useState<any[]>([]);
+  const [artists, setArtists] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState("short_term");
 
   //fetches the data from the api, awaits the response and puts it as a json, and then it inputs it into the track array
@@ -17,7 +17,7 @@ export default function Dashboard() {
         "/api/spotify/top-tracks?range=" + timeRange,
       );
       const result = await response.json();
-      setTracks(result.items);
+      setTracks(result.items || []);
     }
     fetchData();
   }, [timeRange]);
@@ -27,7 +27,7 @@ export default function Dashboard() {
         "/api/spotify/top-artists?range=" + timeRange,
       );
       const result = await response.json();
-      setArtists(result.items);
+      setArtists(result.items || []);
     }
     fetchData();
   }, [timeRange]);
