@@ -31,7 +31,6 @@ export default function GenreChart({ genreData }: Props) {
         margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
       >
         <XAxis dataKey="name" />
-        <YAxis width="auto" />
         <Tooltip />
         <Legend />
         <Bar fill="#82ca9d" radius={[10, 10, 0, 0]} dataKey="count" />

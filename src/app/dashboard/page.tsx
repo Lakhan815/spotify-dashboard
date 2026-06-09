@@ -106,7 +106,7 @@ export default function Dashboard() {
       <hr className="border-white/10 mb-6" />
       {selection === "tracks" && <TopTracks tracks={tracks} />}
       {selection === "artists" && <TopArtists artists={artists} />}
-      {/* <GenreChart genreData={genreData} /> */}
+      <GenreChart genreData={genreData} />
     </div>
   );
 }
