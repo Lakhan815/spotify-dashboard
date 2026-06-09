@@ -43,7 +43,8 @@ export default function Dashboard() {
         "/api/spotify/top-artists?range=" + timeRange,
       );
       const result = await response.json();
-      console.log(result);
+      console.log("raw result:", result);
+      console.log("items:", result.items);
       const genreMap = new Map();
       const items = result.items || [];
       for (let i = 0; i < items.length; i++) {
