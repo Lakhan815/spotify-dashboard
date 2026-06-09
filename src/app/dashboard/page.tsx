@@ -44,12 +44,13 @@ export default function Dashboard() {
       );
       const result = await response.json();
       const genreMap = new Map();
-      for (let i = 0; i < result.items.length; i++) {
-        for (let j = 0; j < result.items[i].genres.length; j++) {
-          if (!genreMap.has(result.items[i].genres[j])) {
-            genreMap.set(result.items[i].genres[j], { val: 1 });
+      const items = result.items || [];
+      for (let i = 0; i < items.length; i++) {
+        for (let j = 0; j < items[i].genres.length; j++) {
+          if (!genreMap.has(items[i].genres[j])) {
+            genreMap.set(items[i].genres[j], { val: 1 });
           } else {
-            genreMap.get(result.items[i].genres[j]).val++;
+            genreMap.get(items[i].genres[j]).val++;
           }
         }
       }
