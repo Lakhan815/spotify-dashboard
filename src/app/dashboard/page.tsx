@@ -5,13 +5,11 @@ import TopTracks from "@/components/TopTracks";
 import TopArtists from "@/components/TopArtists";
 
 export default function Dashboard() {
-  //makes the array of top tracks
   const [tracks, setTracks] = useState<any[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState("short_term");
   const [selection, setSelection] = useState("tracks");
 
-  //fetches the data from the api, awaits the response and puts it as a json, and then it inputs it into the track array
   useEffect(() => {
     if (selection != "tracks") return;
     async function fetchData() {
@@ -23,6 +21,7 @@ export default function Dashboard() {
     }
     fetchData();
   }, [timeRange, selection]);
+
   useEffect(() => {
     if (selection != "artists") return;
     async function fetchData() {
@@ -35,57 +34,44 @@ export default function Dashboard() {
     fetchData();
   }, [timeRange, selection]);
 
-  //returns all of the data from the array
-  //this is what sends the track data into TopTracks.tsx
+  const btnClass =
+    "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-teal-300 to-[#363636] hover:from-teal-400 hover:to-[#444]";
+  const spanClass =
+    "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
+
   return (
-    <div>
-      <div className="flex justify-between items-center ">
+    <div className="p-8">
+      <div className="flex justify-between items-center mb-6">
         <div className="flex gap-2">
           <button
             onClick={() => setTimeRange("short_term")}
-            className="relative inline-flex items-center px-8 pt-8  p-0.5 overflow-hidden text-sm font-medium text-heading rounded-base group bg-linear-to-br from-teal-300 to-[#363636]-300 group-hover:from-teal-300 group-hover:to-[#363636]-300 dark:text-white dark:hover:text-heading focus:ring-4 focus:outline-none focus:ring-[#363636]-200 dark:focus:ring-lime-800"
+            className={btnClass}
           >
-            <span className=" relative px-4 py-2.5 transition-all ease-in duration-75 bg-neutral-primary-soft rounded-base group-hover:bg-transparent group-hover:dark:bg-transparent leading-5">
-              Last 4 Weeks
-            </span>
+            <span className={spanClass}>Last 4 Weeks</span>
           </button>
           <button
             onClick={() => setTimeRange("medium_term")}
-            className="relative inline-flex items-center px-8 pt-8  p-0.5 overflow-hidden text-sm font-medium text-heading rounded-base group bg-linear-to-br from-teal-300 to-[#363636]-300 group-hover:from-teal-300 group-hover:to-[#363636]-300 dark:text-white dark:hover:text-heading focus:ring-4 focus:outline-none focus:ring-[#363636]-200 dark:focus:ring-lime-800"
+            className={btnClass}
           >
-            <span className=" relative px-4 py-2.5 transition-all ease-in duration-75 bg-neutral-primary-soft rounded-base group-hover:bg-transparent group-hover:dark:bg-transparent leading-5">
-              Last 6 Months
-            </span>
+            <span className={spanClass}>Last 6 Months</span>
           </button>
           <button
             onClick={() => setTimeRange("long_term")}
-            className="relative inline-flex items-center px-8 pt-8  p-0.5 overflow-hidden text-sm font-medium text-heading rounded-base group bg-linear-to-br from-teal-300 to-[#363636]-300 group-hover:from-teal-300 group-hover:to-[#363636]-300 dark:text-white dark:hover:text-heading focus:ring-4 focus:outline-none focus:ring-[#363636]-200 dark:focus:ring-lime-800"
+            className={btnClass}
           >
-            <span className=" relative px-4 py-2.5 transition-all ease-in duration-75 bg-neutral-primary-soft rounded-base group-hover:bg-transparent group-hover:dark:bg-transparent leading-5">
-              All Time
-            </span>
+            <span className={spanClass}>All Time</span>
           </button>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={() => setSelection("tracks")}
-            className="relative inline-flex items-center px-8 pt-8  p-0.5 overflow-hidden text-sm font-medium text-heading rounded-base group bg-linear-to-br from-teal-300 to-[#363636]-300 group-hover:from-teal-300 group-hover:to-[#363636]-300 dark:text-white dark:hover:text-heading focus:ring-4 focus:outline-none focus:ring-[#363636]-200 dark:focus:ring-lime-800"
-          >
-            <span className=" relative px-4 py-2.5 transition-all ease-in duration-75 bg-neutral-primary-soft rounded-base group-hover:bg-transparent group-hover:dark:bg-transparent leading-5">
-              Top Tracks
-            </span>
+          <button onClick={() => setSelection("tracks")} className={btnClass}>
+            <span className={spanClass}>Top Tracks</span>
           </button>
-          <button
-            onClick={() => setSelection("artists")}
-            className="relative inline-flex items-center px-8 pt-8  p-0.5 overflow-hidden text-sm font-medium text-heading rounded-base group bg-linear-to-br from-teal-300 to-[#363636]-300 group-hover:from-teal-300 group-hover:to-[#363636]-300 dark:text-white dark:hover:text-heading focus:ring-4 focus:outline-none focus:ring-[#363636]-200 dark:focus:ring-lime-800"
-          >
-            <span className=" relative px-4 py-2.5 transition-all ease-in duration-75 bg-neutral-primary-soft rounded-base group-hover:bg-transparent group-hover:dark:bg-transparent leading-5">
-              Top Artists
-            </span>
+          <button onClick={() => setSelection("artists")} className={btnClass}>
+            <span className={spanClass}>Top Artists</span>
           </button>
         </div>
       </div>
-      <hr />
+      <hr className="border-white/10 mb-6" />
       {selection === "tracks" && <TopTracks tracks={tracks} />}
       {selection === "artists" && <TopArtists artists={artists} />}
     </div>
