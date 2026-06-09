@@ -35,5 +35,31 @@ export async function getRecentlyPlayed(accessToken: string) {
   );
 }
 
+export async function getTopArtistsWithGenres(
+  accessToken: string,
+  range: string,
+) {
+  const topArtists = await spotifyFetch(
+    "https://api.spotify.com/v1/me/top/artists",
+    accessToken,
+    range,
+  );
+
+  const ids = topArtists.items.map((a: any) => a.id).join(",");
+  const full = await fetch(`https://api.spotify.com/v1/artists?ids=${ids}`, {
+    headers: { authorization: "Bearer " + accessToken },
+  });
+  const fullData = await full.json();
+
+  // Merge genres back into the original items
+  const genreMap = new Map(fullData.artists.map((a: any) => [a.id, a.genres]));
+  topArtists.items = topArtists.items.map((a: any) => ({
+    ...a,
+    genres: genreMap.get(a.id) ?? [],
+  }));
+
+  return topArtists;
+}
+
 //full map of how it works
 // Spotify sends the login token -> jwt stores it -> session callback exposes it -> getServerSession() reads it -> top-tracks passes it -> getTopTracks recieves it -> Spotify fetch uses it
