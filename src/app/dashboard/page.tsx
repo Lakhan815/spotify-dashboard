@@ -47,11 +47,12 @@ export default function Dashboard() {
       const genreMap = new Map();
       const items = result.items || [];
       for (let i = 0; i < items.length; i++) {
-        for (let j = 0; j < items[i].genres.length; j++) {
-          if (!genreMap.has(items[i].genres[j])) {
-            genreMap.set(items[i].genres[j], { val: 1 });
+        const genres = items[i].genres ?? [];
+        for (let j = 0; j < genres.length; j++) {
+          if (!genreMap.has(genres[j])) {
+            genreMap.set(genres[j], { val: 1 });
           } else {
-            genreMap.get(items[i].genres[j]).val++;
+            genreMap.get(genres[j]).val++;
           }
         }
       }
