@@ -62,6 +62,8 @@ export default function Dashboard() {
       }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 10);
+      console.log("genreArray:", genreArray);
+
       setGenreData(genreArray);
     }
     fetchGenres();
@@ -107,7 +109,10 @@ export default function Dashboard() {
       <hr className="border-white/10 mb-6" />
       {selection === "tracks" && <TopTracks tracks={tracks} />}
       {selection === "artists" && <TopArtists artists={artists} />}
-      <GenreChart genreData={genreData} />
+      <div style={{ width: "100%", height: 400 }}>
+        console.log("genreData in render:", genreData);
+        <GenreChart genreData={genreData} />
+      </div>
     </div>
   );
 }
