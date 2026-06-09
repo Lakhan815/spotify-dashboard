@@ -9,9 +9,11 @@ export default function Dashboard() {
   const [tracks, setTracks] = useState<any[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState("short_term");
+  const [selection, setSelection] = useState("tracks");
 
   //fetches the data from the api, awaits the response and puts it as a json, and then it inputs it into the track array
   useEffect(() => {
+    if (selection != "tracks") return;
     async function fetchData() {
       const response = await fetch(
         "/api/spotify/top-tracks?range=" + timeRange,
@@ -20,8 +22,9 @@ export default function Dashboard() {
       setTracks(result.items || []);
     }
     fetchData();
-  }, [timeRange]);
+  }, [timeRange, selection]);
   useEffect(() => {
+    if (selection != "artists") return;
     async function fetchData() {
       const response = await fetch(
         "/api/spotify/top-artists?range=" + timeRange,
@@ -30,7 +33,8 @@ export default function Dashboard() {
       setArtists(result.items || []);
     }
     fetchData();
-  }, [timeRange]);
+  }, [timeRange, selection]);
+
   //returns all of the data from the array
   //this is what sends the track data into TopTracks.tsx
   return (
@@ -43,9 +47,13 @@ export default function Dashboard() {
         <button onClick={() => setTimeRange("long_term")}>All Time</button>
       </div>
       <hr />
-      <TopTracks tracks={tracks} />
+      <div>
+        <button onClick={() => setSelection("tracks")}>Top Tracks</button>
+        <button onClick={() => setSelection("artists")}>Top Artists</button>
+      </div>
       <hr />
-      <TopArtists artists={artists} />;
+      {selection === "tracks" && <TopTracks tracks={tracks} />}
+      {selection === "artists" && <TopArtists artists={artists} />}
     </div>
   );
 }
