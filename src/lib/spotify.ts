@@ -45,13 +45,24 @@ export async function getTopArtistsWithGenres(
     range,
   );
 
+  console.log("topArtists response:", topArtists); // add this
+
+  if (!topArtists.items || topArtists.items.length === 0) {
+    return topArtists;
+  }
+
   const ids = topArtists.items.map((a: any) => a.id).join(",");
+
   const full = await fetch(`https://api.spotify.com/v1/artists?ids=${ids}`, {
     headers: { authorization: "Bearer " + accessToken },
   });
+
+  console.log("artists endpoint status:", full.status); // add this
+
   const fullData = await full.json();
 
-  // Merge genres back into the original items
+  console.log("fullData:", fullData); // add this
+
   const genreMap = new Map(fullData.artists.map((a: any) => [a.id, a.genres]));
   topArtists.items = topArtists.items.map((a: any) => ({
     ...a,
