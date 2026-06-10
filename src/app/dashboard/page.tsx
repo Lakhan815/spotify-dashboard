@@ -83,11 +83,7 @@ export default function Dashboard() {
       <hr className="border-white/10 mb-6" />
       {selection === "tracks" && <TopTracks tracks={tracks} />}
       {selection === "artists" && <TopArtists artists={artists} />}
-      <div style={{ width: "100%", height: 400 }}>
-        {selection === "tracks" && (
-          <DurationChart durationData={durationData} />
-        )}
-      </div>
+      {selection === "tracks" && <DurationChart durationData={durationData} />}
     </div>
   );
 }
