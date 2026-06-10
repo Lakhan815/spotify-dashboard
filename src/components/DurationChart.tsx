@@ -19,27 +19,23 @@ interface Props {
 
 export default function DurationChart({ durationData }: Props) {
   return (
-    <ResponsiveContainer width="100%" height={400}>
-      <BarChart
-        style={{
-          width: "100%",
-          maxWidth: "700px",
-          maxHeight: "70vh",
-          aspectRatio: 1.618,
-        }}
-        data={durationData}
-        margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
-      >
-        <XAxis
-          dataKey="name"
-          stroke="#ffffff"
-          tick={{ fill: "#ffffff", fontSize: 10 }}
-        />
-        <YAxis stroke="#ffffff" tick={{ fill: "#ffffff" }} />
-        <Tooltip />
-        <Legend />
-        <Bar fill="#82ca9d" radius={[10, 10, 0, 0]} dataKey="duration" />
-      </BarChart>
-    </ResponsiveContainer>
+    <div style={{ width: "100%", height: 400 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={durationData}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        >
+          <XAxis
+            dataKey="name"
+            stroke="#ffffff"
+            tick={{ fill: "#ffffff", fontSize: 10 }}
+          />
+          <YAxis stroke="#ffffff" tick={{ fill: "#ffffff" }} />
+          <Tooltip />
+          <Legend />
+          <Bar fill="#82ca9d" radius={[10, 10, 0, 0]} dataKey="duration" />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
