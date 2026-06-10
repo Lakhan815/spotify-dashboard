@@ -5,6 +5,7 @@ interface Track {
   name: string;
   artists: Artist[];
   album: Album;
+  popularity: number;
 }
 
 interface Artist {

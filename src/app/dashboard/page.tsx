@@ -3,16 +3,16 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import TopTracks from "@/components/TopTracks";
 import TopArtists from "@/components/TopArtists";
-import GenreChart from "@/components/GenreChart";
+import PopularityChart from "@/components/PopularityChart";
 
 export default function Dashboard() {
   const [tracks, setTracks] = useState<any[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState("short_term");
   const [selection, setSelection] = useState("tracks");
-  const [genreData, setGenreData] = useState<{ name: string; count: number }[]>(
-    [],
-  );
+  const [popularityData, setPopularityData] = useState<
+    { name: string; popularity: number }[]
+  >([]);
   useEffect(() => {
     if (selection != "tracks") return;
     async function fetchData() {
@@ -21,6 +21,11 @@ export default function Dashboard() {
       );
       const result = await response.json();
       setTracks(result.items || []);
+      const popularityData = (result.items || []).map((track: any) => ({
+        name: track.name,
+        popularity: track.popularity,
+      }));
+      setPopularityData(popularityData);
     }
     fetchData();
   }, [timeRange, selection]);
@@ -36,39 +41,6 @@ export default function Dashboard() {
     }
     fetchData();
   }, [timeRange, selection]);
-
-  useEffect(() => {
-    async function fetchGenres() {
-      const response = await fetch(
-        "/api/spotify/top-artists?range=" + timeRange,
-      );
-      const result = await response.json();
-      console.log("raw result:", result);
-      console.log("items:", result.items);
-      const genreMap = new Map();
-      const items = result.items || [];
-      for (let i = 0; i < items.length; i++) {
-        const genres = items[i].genres ?? [];
-        for (let j = 0; j < genres.length; j++) {
-          if (!genreMap.has(genres[j])) {
-            genreMap.set(genres[j], { val: 1 });
-          } else {
-            genreMap.get(genres[j]).val++;
-          }
-        }
-      }
-      const genreArray = Array.from(genreMap, ([name, val]) => ({
-        name,
-        count: val.val,
-      }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 10);
-      console.log("genreArray:", genreArray);
-
-      setGenreData(genreArray);
-    }
-    fetchGenres();
-  }, [timeRange]);
 
   const btnClass =
     "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
@@ -111,8 +83,7 @@ export default function Dashboard() {
       {selection === "tracks" && <TopTracks tracks={tracks} />}
       {selection === "artists" && <TopArtists artists={artists} />}
       <div style={{ width: "100%", height: 400 }}>
-        console.log("genreData in render:", genreData);
-        <GenreChart genreData={genreData} />
+        <PopularityChart popularityData={popularityData} />
       </div>
     </div>
   );
