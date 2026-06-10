@@ -3,15 +3,15 @@ export const dynamic = "force-dynamic";
 import { useEffect, useState } from "react";
 import TopTracks from "@/components/TopTracks";
 import TopArtists from "@/components/TopArtists";
-import PopularityChart from "@/components/PopularityChart";
+import DurationChart from "@/components/DurationChart";
 
 export default function Dashboard() {
   const [tracks, setTracks] = useState<any[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
   const [timeRange, setTimeRange] = useState("short_term");
   const [selection, setSelection] = useState("tracks");
-  const [popularityData, setPopularityData] = useState<
-    { name: string; popularity: number }[]
+  const [durationData, setDurationData] = useState<
+    { name: string; duration: number }[]
   >([]);
   useEffect(() => {
     if (selection != "tracks") return;
@@ -21,11 +21,11 @@ export default function Dashboard() {
       );
       const result = await response.json();
       setTracks(result.items || []);
-      const popularityData = (result.items || []).map((track: any) => ({
+      const durationData = (result.items || []).map((track: any) => ({
         name: track.name,
-        popularity: track.popularity,
+        duration: Math.round(track.duration_ms / 1000),
       }));
-      setPopularityData(popularityData);
+      setDurationData(durationData);
     }
     fetchData();
   }, [timeRange, selection]);
@@ -46,7 +46,6 @@ export default function Dashboard() {
     "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
   const spanClass =
     "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
-  console.log("popularity data:", popularityData);
 
   return (
     <div className="p-8">
@@ -84,7 +83,9 @@ export default function Dashboard() {
       {selection === "tracks" && <TopTracks tracks={tracks} />}
       {selection === "artists" && <TopArtists artists={artists} />}
       <div style={{ width: "100%", height: 400 }}>
-        <PopularityChart popularityData={popularityData} />
+        {selection === "tracks" && (
+          <DurationChart durationData={durationData} />
+        )}
       </div>
     </div>
   );

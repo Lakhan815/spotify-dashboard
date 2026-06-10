@@ -8,16 +8,16 @@ import {
   Legend,
 } from "recharts";
 
-interface PopularityData {
+interface DurationData {
   name: string;
-  popularity: number;
+  duration: number;
 }
 
 interface Props {
-  popularityData: PopularityData[];
+  durationData: DurationData[];
 }
 
-export default function PopularityChart({ popularityData }: Props) {
+export default function DurationChart({ durationData }: Props) {
   return (
     <ResponsiveContainer width="100%" height={400}>
       <BarChart
@@ -27,13 +27,13 @@ export default function PopularityChart({ popularityData }: Props) {
           maxHeight: "70vh",
           aspectRatio: 1.618,
         }}
-        data={popularityData}
+        data={durationData}
         margin={{ top: 5, right: 0, left: 0, bottom: 5 }}
       >
         <XAxis dataKey="name" />
         <Tooltip />
         <Legend />
-        <Bar fill="#82ca9d" radius={[10, 10, 0, 0]} dataKey="popularity" />
+        <Bar fill="#82ca9d" radius={[10, 10, 0, 0]} dataKey="duration" />
       </BarChart>
     </ResponsiveContainer>
   );
