@@ -46,6 +46,7 @@ export default function Dashboard() {
     "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
   const spanClass =
     "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
+  console.log("popularity data:", popularityData);
 
   return (
     <div className="p-8">
