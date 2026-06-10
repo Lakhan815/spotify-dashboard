@@ -13,8 +13,11 @@ export default function Dashboard() {
   const [durationData, setDurationData] = useState<
     { name: string; duration: number }[]
   >([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (selection != "tracks") return;
+    setLoading(true);
     async function fetchData() {
       const response = await fetch(
         "/api/spotify/top-tracks?range=" + timeRange,
@@ -27,6 +30,7 @@ export default function Dashboard() {
       }));
       console.log("duration check:", result.items?.[0]?.duration_ms);
       setDurationData(durationData);
+      setLoading(false);
     }
     fetchData();
   }, [timeRange, selection]);
@@ -34,11 +38,13 @@ export default function Dashboard() {
   useEffect(() => {
     if (selection != "artists") return;
     async function fetchData() {
+      setLoading(true);
       const response = await fetch(
         "/api/spotify/top-artists?range=" + timeRange,
       );
       const result = await response.json();
       setArtists(result.items || []);
+      setLoading(false);
     }
     fetchData();
   }, [timeRange, selection]);
@@ -81,9 +87,25 @@ export default function Dashboard() {
         </div>
       </div>
       <hr className="border-white/10 mb-6" />
-      {selection === "tracks" && <TopTracks tracks={tracks} />}
-      {selection === "artists" && <TopArtists artists={artists} />}
-      {selection === "tracks" && <DurationChart durationData={durationData} />}
+      {loading ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="flex flex-col gap-2">
+              <div className="w-full aspect-square bg-white/10 rounded-lg animate-pulse" />
+              <div className="h-4 bg-white/10 rounded animate-pulse" />
+              <div className="h-3 w-2/3 bg-white/10 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <>
+          {selection === "tracks" && <TopTracks tracks={tracks} />}
+          {selection === "artists" && <TopArtists artists={artists} />}
+          {selection === "tracks" && (
+            <DurationChart durationData={durationData} />
+          )}
+        </>
+      )}
     </div>
   );
 }

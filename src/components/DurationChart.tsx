@@ -29,6 +29,9 @@ export default function DurationChart({ durationData }: Props) {
             dataKey="name"
             stroke="#ffffff"
             tick={{ fill: "#ffffff", fontSize: 10 }}
+            angle={-45}
+            textAnchor="end"
+            height={80}
           />
           <YAxis stroke="#ffffff" tick={{ fill: "#ffffff" }} />
           <Tooltip />
