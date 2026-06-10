@@ -25,6 +25,7 @@ export default function Dashboard() {
         name: track.name,
         duration: Math.round(track.duration_ms / 1000),
       }));
+      console.log("duration check:", result.items?.[0]?.duration_ms);
       setDurationData(durationData);
     }
     fetchData();
