@@ -62,6 +62,7 @@ export default function Dashboard() {
         name: item.track.name,
         played_at: item.played_at,
       }));
+      console.log(playedData);
       setPlayedData(playedData);
       setLoading(false);
     }
