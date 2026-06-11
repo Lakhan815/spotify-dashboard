@@ -59,6 +59,7 @@ export const authOptions: AuthOptions = {
             },
           });
         }
+        console.log("saved", recentlyPlayed.length, "tracks");
       }
 
       return token;
