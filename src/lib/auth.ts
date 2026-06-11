@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import NextAuth from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { AuthOptions } from "next-auth";
+import { getRecentlyPlayed } from "./spotify";
+import RecentlyPlayed from "@/components/RecentlyPlayed";
 
 export const authOptions: AuthOptions = {
   //this is how it knows to use spotify as a login method
@@ -38,7 +40,27 @@ export const authOptions: AuthOptions = {
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
+        const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
+        for (var i = 0; i < recentlyPlayed.length; i++) {
+          const track = recentlyPlayed[i].track;
+          await prisma.track.upsert({
+            where: { id: track.id },
+            update: {
+              name: track.name,
+              length: track.duration_ms,
+              album: track.album.name,
+            },
+            create: {
+              id: track.id,
+              name: track.name,
+              length: track.duration_ms,
+              album: track.album.name,
+              artistId: track.artists[0].id,
+            },
+          });
+        }
       }
+
       return token;
     },
     //runs whenever you call getServerSession() Takes ur accesstoken from the JWT and attaches it to the session,
