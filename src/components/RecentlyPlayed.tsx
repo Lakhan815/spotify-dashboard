@@ -30,6 +30,7 @@ function groupByDay({ tracks }: Props) {
       groupMap.get(temp).val++;
     }
   }
+  console.log(groupMap);
   return Array.from(groupMap.entries()).map(([key, value]) => {
     date: key;
     plays: value.val;
