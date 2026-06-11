@@ -31,13 +31,14 @@ function groupByDay({ tracks }: Props) {
     }
   }
   console.log(groupMap);
-  return Array.from(groupMap.entries()).map(([key, value]) => {
-    date: key;
-    plays: value.val;
-  });
+  return Array.from(groupMap.entries()).map(([key, value]) => ({
+    date: key,
+    plays: value.val,
+  }));
 }
 
 export default function RecentlyPlayed({ tracks }: Props) {
+  if (tracks.length === 0) return null;
   const group = groupByDay({ tracks });
   return (
     <div style={{ width: "100%", height: 400 }}>
