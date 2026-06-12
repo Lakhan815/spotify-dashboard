@@ -70,7 +70,7 @@ export default function RecentlyPlayed({ tracks }: Props) {
 
   return (
     <div className="flex gap-4">
-      <div className="w-1/4 h-100 overflow-y-auto">
+      <div className="w-1/4">
         {" "}
         <div className="w-full p-6 bg-white/5 border border-white/20 rounded-lg shadow">
           <div className="flex items-center justify-between mb-4">
@@ -79,7 +79,7 @@ export default function RecentlyPlayed({ tracks }: Props) {
             </h5>
           </div>
           <div className="flow-root">
-            <ul className="flex flex-col divide-y divide-white/10">
+            <ul className="flex flex-col divide-y divide-white/10 h-100 overflow-y-auto custom-scrollbar">
               {tracks.map((track, i) => (
                 <li key={i} className="py-3">
                   <div className="flex items-center gap-3">
