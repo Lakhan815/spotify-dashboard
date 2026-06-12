@@ -35,5 +35,12 @@ export async function getRecentlyPlayed(accessToken: string) {
   );
 }
 
+export async function getAudioFeatures(accessToken: string, ids: string[]) {
+  return spotifyFetch(
+    "https://api.spotify.com/v1/audio-features?ids=" + ids.join(","),
+    accessToken,
+  );
+}
+
 //full map of how it works
 // Spotify sends the login token -> jwt stores it -> session callback exposes it -> getServerSession() reads it -> top-tracks passes it -> getTopTracks recieves it -> Spotify fetch uses it
