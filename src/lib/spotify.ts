@@ -30,7 +30,7 @@ export async function getTopArtists(accessToken: string, range: string) {
 
 export async function getRecentlyPlayed(accessToken: string) {
   return spotifyFetch(
-    "https://api.spotify.com/v1/me/player/recently-played",
+    "https://api.spotify.com/v1/me/player/recently-played?limit=50",
     accessToken,
   );
 }

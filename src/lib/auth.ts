@@ -4,7 +4,6 @@ import prisma from "@/lib/prisma";
 import NextAuth from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { AuthOptions } from "next-auth";
-import { getRecentlyPlayed } from "./spotify";
 
 export const authOptions: AuthOptions = {
   //this is how it knows to use spotify as a login method
