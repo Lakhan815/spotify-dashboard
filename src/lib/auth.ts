@@ -44,6 +44,11 @@ export const authOptions: AuthOptions = {
           const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
           for (var i = 0; i < recentlyPlayed.items.length; i++) {
             const track = recentlyPlayed.items[i].track;
+            await prisma.artist.upsert({
+              where: { id: track.artists[0].id },
+              update: { name: track.artists[0].name },
+              create: { id: track.artists[0].id, name: track.artists[0].name },
+            });
             await prisma.track.upsert({
               where: { id: track.id },
               update: {
