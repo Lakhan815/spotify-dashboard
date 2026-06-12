@@ -42,8 +42,8 @@ export const authOptions: AuthOptions = {
         if (account) {
           token.accessToken = account.access_token;
           const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
-          for (var i = 0; i < recentlyPlayed.length; i++) {
-            const track = recentlyPlayed[i].track;
+          for (var i = 0; i < recentlyPlayed.items.length; i++) {
+            const track = recentlyPlayed.items[i].track;
             await prisma.track.upsert({
               where: { id: track.id },
               update: {
@@ -60,7 +60,7 @@ export const authOptions: AuthOptions = {
               },
             });
           }
-          console.log("saved", recentlyPlayed.length, "tracks");
+          console.log("saved", recentlyPlayed.items.length, "tracks");
         }
       } catch (e) {
         console.error("jwt callback error:", e);
