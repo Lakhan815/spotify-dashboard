@@ -69,71 +69,80 @@ export default function RecentlyPlayed({ tracks }: Props) {
     "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
-        {[7, 30, 90].map((days) => (
-          <span className={spanClass}>
-            <button
-              key={days}
-              onClick={() => setDateRange(days)}
-              className={`${btnClass} ${dateRange === days ? "bg-white text-black" : "border-white/20 text-white"}`}
-            >
-              {days === 7
-                ? "Last 7 Days"
-                : days === 30
-                  ? "Last 30 Days"
-                  : "Last 3 Months"}
-            </button>
-          </span>
-        ))}
-      </div>
-      <div style={{ width: "100%", height: 400 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={group}
-            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-          >
-            <XAxis
-              dataKey="date"
-              stroke="#ffffff"
-              tick={{ fill: "#ffffff", fontSize: 10 }}
-              angle={-45}
-              textAnchor="end"
-              height={80}
-            />
-            <YAxis stroke="#ffffff" tick={{ fill: "#ffffff" }} />
-            <Tooltip />
-            <Legend />
-            <Line stroke="#82ca9d" dataKey="plays" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="w-full p-6 bg-white/5 border border-white/20 rounded-lg shadow">
-        <div className="flex items-center justify-between mb-4">
-          <h5 className="text-xl font-semibold text-white">Recently Played</h5>
-        </div>
-        <div className="flow-root">
-          <ul className="flex flex-col divide-y divide-white/10">
-            {tracks.map((track, i) => (
-              <li key={i} className="py-3">
-                <div className="flex items-center gap-3">
-                  <img
-                    src={track.albumImage}
-                    alt={track.name}
-                    className="w-10 h-10 rounded"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-white truncate">
-                      {track.name}
-                    </p>
-                    <p className="text-sm text-white/60">
-                      {getRelativeTime(track.played_at)}
-                    </p>
+    <div className="flex gap-4">
+      <div className="w-1/4">
+        {" "}
+        <div className="w-full p-6 bg-white/5 border border-white/20 rounded-lg shadow">
+          <div className="flex items-center justify-between mb-4">
+            <h5 className="text-xl font-semibold text-white">
+              Recently Played
+            </h5>
+          </div>
+          <div className="flow-root">
+            <ul className="flex flex-col divide-y divide-white/10">
+              {tracks.map((track, i) => (
+                <li key={i} className="py-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={track.albumImage}
+                      alt={track.name}
+                      className="w-10 h-10 rounded"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-white truncate">
+                        {track.name}
+                      </p>
+                      <p className="text-sm text-white/60">
+                        {getRelativeTime(track.played_at)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </li>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="w-3/4">
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-2">
+            {[7, 30, 90].map((days) => (
+              <button
+                key={days}
+                onClick={() => setDateRange(days)}
+                className={btnClass}
+              >
+                <span className={spanClass}>
+                  {days === 7
+                    ? "Last 7 Days"
+                    : days === 30
+                      ? "Last 30 Days"
+                      : "Last 3 Months"}
+                </span>
+              </button>
             ))}
-          </ul>
+          </div>
+          <div style={{ width: "100%", height: 400 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={group}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <XAxis
+                  dataKey="date"
+                  stroke="#ffffff"
+                  tick={{ fill: "#ffffff", fontSize: 10 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                />
+                <YAxis stroke="#ffffff" tick={{ fill: "#ffffff" }} />
+                <Tooltip />
+                <Legend />
+                <Line stroke="#82ca9d" dataKey="plays" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>
