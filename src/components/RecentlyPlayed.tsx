@@ -108,26 +108,35 @@ export default function RecentlyPlayed({ tracks }: Props) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <ul className="flex flex-col gap-2 mt-4">
-        {tracks.map((track, i) => (
-          <li
-            key={i}
-            className="flex items-center gap-4 p-3 rounded-lg border border-white/20"
-          >
-            <img
-              src={track.albumImage}
-              alt={track.name}
-              className="w-12 h-12 rounded"
-            />
-            <div className="flex flex-col">
-              <p className="font-medium">{track.name}</p>
-              <p className="text-sm text-white/60">
-                {getRelativeTime(track.played_at)}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <div className="w-full max-w-sm p-6 bg-neutral-primary-soft border border-default rounded-base shadow-xs">
+        <div className="flex items-center justify-between mb-4">
+          <h5 className="text-xl font-semibold leading-none text-heading">
+            Recently Played
+          </h5>
+        </div>
+        <div className="flow-root">
+          <ul className="flex flex-col gap-2 mt-4">
+            {tracks.map((track, i) => (
+              <li
+                key={i}
+                className="flex items-center gap-4 p-3 rounded-lg border border-white/20"
+              >
+                <img
+                  src={track.albumImage}
+                  alt={track.name}
+                  className="w-12 h-12 rounded"
+                />
+                <div className="flex flex-col">
+                  <p className="font-medium">{track.name}</p>
+                  <p className="text-sm text-white/60">
+                    {getRelativeTime(track.played_at)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
