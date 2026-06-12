@@ -38,7 +38,6 @@ export const authOptions: AuthOptions = {
     //JWT(Json Web Token), Runs when it's created. It is a small encrypted packet that stores session data
     //You grab the access token from account and save it there
     async jwt({ token, account }) {
-      console.log("jwt fired, account:", !!account);
       try {
         if (account) {
           token.accessToken = account.access_token;
