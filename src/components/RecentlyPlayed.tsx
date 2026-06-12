@@ -70,7 +70,7 @@ export default function RecentlyPlayed({ tracks }: Props) {
 
   return (
     <div className="flex gap-4">
-      <div className="w-1/4">
+      <div className="w-1/4 h-100 overflow-y-auto">
         {" "}
         <div className="w-full p-6 bg-white/5 border border-white/20 rounded-lg shadow">
           <div className="flex items-center justify-between mb-4">
