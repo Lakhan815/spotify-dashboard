@@ -108,29 +108,28 @@ export default function RecentlyPlayed({ tracks }: Props) {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <div className="w-full max-w-sm p-6 bg-neutral-primary-soft border border-default rounded-base shadow-xs">
+      <div className="w-full p-6 bg-white/5 border border-white/20 rounded-lg shadow">
         <div className="flex items-center justify-between mb-4">
-          <h5 className="text-xl font-semibold leading-none text-heading">
-            Recently Played
-          </h5>
+          <h5 className="text-xl font-semibold text-white">Recently Played</h5>
         </div>
         <div className="flow-root">
-          <ul className="flex flex-col gap-2 mt-4">
+          <ul className="flex flex-col divide-y divide-white/10">
             {tracks.map((track, i) => (
-              <li
-                key={i}
-                className="flex items-center gap-4 p-3 rounded-lg border border-white/20"
-              >
-                <img
-                  src={track.albumImage}
-                  alt={track.name}
-                  className="w-12 h-12 rounded"
-                />
-                <div className="flex flex-col">
-                  <p className="font-medium">{track.name}</p>
-                  <p className="text-sm text-white/60">
-                    {getRelativeTime(track.played_at)}
-                  </p>
+              <li key={i} className="py-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={track.albumImage}
+                    alt={track.name}
+                    className="w-10 h-10 rounded"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-white truncate">
+                      {track.name}
+                    </p>
+                    <p className="text-sm text-white/60">
+                      {getRelativeTime(track.played_at)}
+                    </p>
+                  </div>
                 </div>
               </li>
             ))}
