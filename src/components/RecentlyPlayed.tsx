@@ -12,6 +12,7 @@ import {
 interface Track {
   name: string;
   played_at: string;
+  albumImage: string;
 }
 
 interface Props {
@@ -39,6 +40,19 @@ function groupByDay(tracks: Track[]): { date: string; plays: number }[] {
     .reverse();
 }
 
+function getRelativeTime(played_at: string) {
+  const now = new Date();
+  const playedAt = new Date(played_at);
+  const diff = Math.round((now.getTime() - playedAt.getTime()) / 1000);
+  const minutes = Math.floor(diff / 60);
+  const hours = Math.floor(diff / 60 / 60);
+  const days = Math.floor(diff / 60 / 60 / 24);
+
+  if (minutes < 60) return minutes + " minutes ago";
+  else if (hours < 24) return hours + " hours ago";
+  else return days + " days ago";
+}
+
 export default function RecentlyPlayed({ tracks }: Props) {
   const [dateRange, setDateRange] = useState(7);
 
@@ -49,23 +63,28 @@ export default function RecentlyPlayed({ tracks }: Props) {
   const filtered = tracks.filter((track) => new Date(track.played_at) > cutoff);
   const group = groupByDay(filtered);
 
-  const btnClass = "px-4 py-2 rounded-full border text-sm font-medium";
+  const btnClass =
+    "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
+  const spanClass =
+    "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2">
         {[7, 30, 90].map((days) => (
-          <button
-            key={days}
-            onClick={() => setDateRange(days)}
-            className={`${btnClass} ${dateRange === days ? "bg-white text-black" : "border-white/20 text-white"}`}
-          >
-            {days === 7
-              ? "Last 7 Days"
-              : days === 30
-                ? "Last 30 Days"
-                : "Last 3 Months"}
-          </button>
+          <span className={spanClass}>
+            <button
+              key={days}
+              onClick={() => setDateRange(days)}
+              className={`${btnClass} ${dateRange === days ? "bg-white text-black" : "border-white/20 text-white"}`}
+            >
+              {days === 7
+                ? "Last 7 Days"
+                : days === 30
+                  ? "Last 30 Days"
+                  : "Last 3 Months"}
+            </button>
+          </span>
         ))}
       </div>
       <div style={{ width: "100%", height: 400 }}>
@@ -89,6 +108,26 @@ export default function RecentlyPlayed({ tracks }: Props) {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <ul className="flex flex-col gap-2 mt-4">
+        {tracks.map((track, i) => (
+          <li
+            key={i}
+            className="flex items-center gap-4 p-3 rounded-lg border border-white/20"
+          >
+            <img
+              src={track.albumImage}
+              alt={track.name}
+              className="w-12 h-12 rounded"
+            />
+            <div className="flex flex-col">
+              <p className="font-medium">{track.name}</p>
+              <p className="text-sm text-white/60">
+                {getRelativeTime(track.played_at)}
+              </p>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

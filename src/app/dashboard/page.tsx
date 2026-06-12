@@ -15,7 +15,7 @@ export default function Dashboard() {
     { name: string; duration: number }[]
   >([]);
   const [playedData, setPlayedData] = useState<
-    { name: string; played_at: string }[]
+    { name: string; played_at: string; albumImage: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,6 +61,7 @@ export default function Dashboard() {
       const playedData = (result.items || []).map((item: any) => ({
         name: item.track.name,
         played_at: item.played_at,
+        albumImage: item.track.album.images[0]?.url,
       }));
       console.log(playedData);
       setPlayedData(playedData);
