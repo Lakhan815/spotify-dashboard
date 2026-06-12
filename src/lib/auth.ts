@@ -38,30 +38,34 @@ export const authOptions: AuthOptions = {
     //JWT(Json Web Token), Runs when it's created. It is a small encrypted packet that stores session data
     //You grab the access token from account and save it there
     async jwt({ token, account }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
-        for (var i = 0; i < recentlyPlayed.length; i++) {
-          const track = recentlyPlayed[i].track;
-          await prisma.track.upsert({
-            where: { id: track.id },
-            update: {
-              name: track.name,
-              length: track.duration_ms,
-              album: track.album.name,
-            },
-            create: {
-              id: track.id,
-              name: track.name,
-              length: track.duration_ms,
-              album: track.album.name,
-              artistId: track.artists[0].id,
-            },
-          });
+      console.log("jwt fired, account:", !!account);
+      try {
+        if (account) {
+          token.accessToken = account.access_token;
+          const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
+          for (var i = 0; i < recentlyPlayed.length; i++) {
+            const track = recentlyPlayed[i].track;
+            await prisma.track.upsert({
+              where: { id: track.id },
+              update: {
+                name: track.name,
+                length: track.duration_ms,
+                album: track.album.name,
+              },
+              create: {
+                id: track.id,
+                name: track.name,
+                length: track.duration_ms,
+                album: track.album.name,
+                artistId: track.artists[0].id,
+              },
+            });
+          }
+          console.log("saved", recentlyPlayed.length, "tracks");
         }
-        console.log("saved", recentlyPlayed.length, "tracks");
+      } catch (e) {
+        console.error("jwt callback error:", e);
       }
-
       return token;
     },
     //runs whenever you call getServerSession() Takes ur accesstoken from the JWT and attaches it to the session,
