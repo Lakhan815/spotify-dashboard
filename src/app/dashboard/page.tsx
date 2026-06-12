@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import TopTracks from "@/components/TopTracks";
 import TopArtists from "@/components/TopArtists";
 import DurationChart from "@/components/DurationChart";
+import RecentlyPlayed from "@/components/RecentlyPlayed";
 
 export default function Dashboard() {
   const [tracks, setTracks] = useState<any[]>([]);
@@ -12,6 +13,9 @@ export default function Dashboard() {
   const [selection, setSelection] = useState("tracks");
   const [durationData, setDurationData] = useState<
     { name: string; duration: number }[]
+  >([]);
+  const [playedData, setPlayedData] = useState<
+    { name: string; played_at: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,7 +32,6 @@ export default function Dashboard() {
         name: track.name,
         duration: Math.round(track.duration_ms / 1000),
       }));
-      console.log("duration check:", result.items?.[0]?.duration_ms);
       setDurationData(durationData);
       setLoading(false);
     }
@@ -48,6 +51,23 @@ export default function Dashboard() {
     }
     fetchData();
   }, [timeRange, selection]);
+
+  useEffect(() => {
+    if (selection != "recent") return;
+    async function fetchData() {
+      setLoading(true);
+      const response = await fetch("/api/spotify/recently-played");
+      const result = await response.json();
+      const playedData = (result.items || []).map((item: any) => ({
+        name: item.track.name,
+        played_at: item.played_at,
+      }));
+      console.log(playedData);
+      setPlayedData(playedData);
+      setLoading(false);
+    }
+    fetchData();
+  }, [selection]);
 
   const btnClass =
     "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
@@ -81,6 +101,9 @@ export default function Dashboard() {
           <button onClick={() => setSelection("tracks")} className={btnClass}>
             <span className={spanClass}>Top Tracks</span>
           </button>
+          <button onClick={() => setSelection("recent")} className={btnClass}>
+            <span className={spanClass}>Recent Tracks</span>
+          </button>
           <button onClick={() => setSelection("artists")} className={btnClass}>
             <span className={spanClass}>Top Artists</span>
           </button>
@@ -104,6 +127,7 @@ export default function Dashboard() {
           {selection === "tracks" && (
             <DurationChart durationData={durationData} />
           )}
+          {selection === "recent" && <RecentlyPlayed tracks={playedData} />}
         </>
       )}
     </div>
