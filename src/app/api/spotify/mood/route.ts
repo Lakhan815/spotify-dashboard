@@ -23,5 +23,22 @@ export async function GET(request: Request) {
       .slice(0, 20)
       .map((track: any) => getTrackTags(track.artists[0].name, track.name)),
   );
-  return NextResponse.json(results);
+  const groupMap = new Map();
+  for (var i = 0; i < 20; i++) {
+    for (var j = 0; j < results[i].track.toptags.tag.length; j++) {
+      const temp = results[i].track.toptags.tag[j].name;
+      if (!groupMap.has(temp)) {
+        groupMap.set(temp, { val: 1 });
+      } else {
+        groupMap.get(temp).val++;
+      }
+    }
+  }
+  const tagArray = Array.from(groupMap.entries())
+    .map(([key, value]) => ({
+      tag: key,
+      plays: value.val,
+    }))
+    .sort((a, b) => b.plays - a.plays);
+  return NextResponse.json(tagArray);
 }
