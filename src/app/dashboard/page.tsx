@@ -38,6 +38,7 @@ export default function Dashboard() {
       const moodResponse = await fetch("/api/spotify/mood");
       const moodResult = await moodResponse.json();
       setTagData(moodResult.slice(0, 8));
+      console.log(tagData);
       setLoading(false);
     }
     fetchData();
