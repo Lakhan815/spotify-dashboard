@@ -20,11 +20,11 @@ export async function GET(request: Request) {
   //getTrackTags
   const results = await Promise.all(
     tracks.items
-      .slice(0, 50)
+      .slice(0, 30)
       .map((track: any) => getTrackTags(track.artists[0].name, track.name)),
   );
   const groupMap = new Map();
-  for (var i = 0; i < 50; i++) {
+  for (var i = 0; i < 30; i++) {
     if (!results[i].track || !results[i].track.toptags) continue;
     for (var j = 0; j < results[i].track.toptags.tag.length; j++) {
       const temp = results[i].track.toptags.tag[j].name;
