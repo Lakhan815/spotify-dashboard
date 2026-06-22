@@ -18,7 +18,7 @@ type Props = {
 
 export default function MoodChart({ tags }: Props) {
   return (
-    <div className="w-[300px] h-[300px]">
+    <div style={{ width: 300, height: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart
           style={{
