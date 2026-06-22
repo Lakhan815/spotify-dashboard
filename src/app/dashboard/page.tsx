@@ -5,6 +5,7 @@ import TopTracks from "@/components/TopTracks";
 import TopArtists from "@/components/TopArtists";
 import DurationChart from "@/components/DurationChart";
 import RecentlyPlayed from "@/components/RecentlyPlayed";
+import MoodChart from "@/components/MoodChart";
 
 export default function Dashboard() {
   const [tracks, setTracks] = useState<any[]>([]);
@@ -18,6 +19,7 @@ export default function Dashboard() {
     { name: string; played_at: string; albumImage: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [tagData, setTagData] = useState<any[]>([]);
 
   useEffect(() => {
     if (selection != "tracks") return;
@@ -33,6 +35,9 @@ export default function Dashboard() {
         duration: Math.round(track.duration_ms / 1000),
       }));
       setDurationData(durationData);
+      const moodResponse = await fetch("/api/spotify/mood");
+      const moodResult = await moodResponse.json();
+      setTagData(moodResult.slice(0, 8));
       setLoading(false);
     }
     fetchData();
@@ -128,6 +133,7 @@ export default function Dashboard() {
           {selection === "tracks" && (
             <DurationChart durationData={durationData} />
           )}
+          {selection === "tracks" && <MoodChart tags={tagData} />}
           {selection === "recent" && <RecentlyPlayed tracks={playedData} />}
         </>
       )}
