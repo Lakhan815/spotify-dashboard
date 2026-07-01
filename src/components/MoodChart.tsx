@@ -21,14 +21,6 @@ export default function MoodChart({ tags }: Props) {
     <div style={{ width: "100%", height: 300 }}>
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart
-          style={{
-            width: "100%",
-            height: "100%",
-            maxWidth: "500px",
-            maxHeight: "80vh",
-            aspectRatio: 1,
-          }}
-          responsive
           outerRadius="80%"
           data={tags}
           margin={{
