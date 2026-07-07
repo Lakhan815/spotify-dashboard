@@ -20,6 +20,10 @@ export default function Dashboard() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [tagData, setTagData] = useState<any[]>([]);
+  const [recapData, setRecapData] = useState<{
+    tracksCaption: string;
+    artistsCaption: string;
+  } | null>(null);
 
   useEffect(() => {
     if (selection != "tracks") return;
@@ -77,6 +81,14 @@ export default function Dashboard() {
     fetchData();
   }, [selection]);
 
+  useEffect(() => {
+    async function fetchRecap() {
+      const response = await fetch("/api/spotify/recap");
+      const result = await response.json();
+      setRecapData(result);
+    }
+    fetchRecap();
+  }, []);
   const btnClass =
     "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
   const spanClass =
@@ -130,6 +142,8 @@ export default function Dashboard() {
         </div>
       ) : (
         <>
+          {selection === "tracks" && <p>{recapData?.tracksCaption}</p>}
+          {selection === "artists" && <p>{recapData?.artistsCaption}</p>}
           {selection === "tracks" && <TopTracks tracks={tracks} />}
           {selection === "artists" && <TopArtists artists={artists} />}
           {selection === "tracks" && (
