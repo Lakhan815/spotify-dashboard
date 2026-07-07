@@ -1,3 +1,4 @@
+export const runtime = "edge";
 import { ImageResponse } from "@vercel/og";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
