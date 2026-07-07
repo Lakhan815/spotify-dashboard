@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getTopTracks, getTopArtists } from "@/lib/spotify";
-
+import prisma from "@/lib/prisma";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const range = searchParams.get("range") || "short_term";
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     },
   );
   const data = await response.json();
-  console.log(JSON.stringify(data));
+  console.log("session object:", JSON.stringify(session));
   try {
     const rawText = data.candidates[0].content.parts[0].text;
     const cleanText = rawText.replace(/```json|```/g, "").trim();
