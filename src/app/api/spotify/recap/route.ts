@@ -48,6 +48,8 @@ export async function GET(request: Request) {
         rank: index + 1,
       }),
     );
+    console.log("tracksData items count:", tracksData.items?.length);
+    console.log("artistsData items count:", artistsData.items?.length);
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
