@@ -162,8 +162,16 @@ export default function Dashboard() {
         </div>
       ) : (
         <>
-          {selection === "tracks" && <p>{recapData?.tracksCaption}</p>}
-          {selection === "artists" && <p>{recapData?.artistsCaption}</p>}
+          {selection === "tracks" && recapData?.tracksCaption && (
+            <div className="mb-6 px-6 py-4 rounded-lg border border-lime-400/40 bg-[#1a1a1a]">
+              <p className="text-white/90">{recapData.tracksCaption}</p>
+            </div>
+          )}
+          {selection === "artists" && recapData?.artistsCaption && (
+            <div className="mb-6 px-6 py-4 rounded-lg border border-lime-400/40 bg-[#1a1a1a]">
+              <p className="text-white/90">{recapData.artistsCaption}</p>
+            </div>
+          )}
           {selection === "tracks" && <TopTracks tracks={tracks} />}
           {selection === "artists" && <TopArtists artists={artists} />}
           {selection === "tracks" && (
