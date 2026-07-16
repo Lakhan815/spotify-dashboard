@@ -1,21 +1,14 @@
-export const runtime = "edge";
 import { ImageResponse } from "@vercel/og";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { getTopTracks, getTopArtists } from "@/lib/spotify";
+
+export const runtime = "edge";
 
 export async function GET(request: Request) {
-  const session = await getServerSession(authOptions);
+  const { searchParams } = new URL(request.url);
+  const tracksParam = searchParams.get("tracks") || "";
+  const artistsParam = searchParams.get("artists") || "";
 
-  if (!session) {
-    return new Response("Unauthorized", { status: 401 });
-  }
-
-  const tracksData = await getTopTracks(session.accessToken!, "short_term");
-  const artistsData = await getTopArtists(session.accessToken!, "short_term");
-
-  const topTracks = tracksData.items.slice(0, 5);
-  const topArtists = artistsData.items.slice(0, 5);
+  const topTracks = tracksParam.split(",");
+  const topArtists = artistsParam.split(",");
 
   return new ImageResponse(
     <div
@@ -29,22 +22,22 @@ export async function GET(request: Request) {
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-        {topTracks.map((track: any, index: number) => (
+        {topTracks.map((track: string, index: number) => (
           <div
             key={index}
             style={{ display: "flex", fontSize: 24, marginBottom: 10 }}
           >
-            {index + 1}. {track.name}
+            {index + 1}. {track}
           </div>
         ))}
       </div>
       <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-        {topArtists.map((artist: any, index: number) => (
+        {topArtists.map((artist: string, index: number) => (
           <div
             key={index}
             style={{ display: "flex", fontSize: 24, marginBottom: 10 }}
           >
-            {index + 1}. {artist.name}
+            {index + 1}. {artist}
           </div>
         ))}
       </div>

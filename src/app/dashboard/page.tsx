@@ -94,6 +94,20 @@ export default function Dashboard() {
   const spanClass =
     "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
 
+  function buildOgUrl(tracks: any[], artists: any[]) {
+    const trackNames = tracks
+      .slice(0, 5)
+      .map((track) => encodeURIComponent(track.name))
+      .join(",");
+
+    const artistNames = artists
+      .slice(0, 5)
+      .map((artist) => encodeURIComponent(artist.name))
+      .join(",");
+
+    return `/api/og?tracks=${trackNames}&artists=${artistNames}`;
+  }
+
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
@@ -126,6 +140,12 @@ export default function Dashboard() {
           </button>
           <button onClick={() => setSelection("artists")} className={btnClass}>
             <span className={spanClass}>Top Artists</span>
+          </button>
+          <button
+            onClick={() => window.open(buildOgUrl(tracks, artists), "_blank")}
+            className={btnClass}
+          >
+            <span className={spanClass}>Share</span>
           </button>
         </div>
       </div>
