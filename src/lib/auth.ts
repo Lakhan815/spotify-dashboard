@@ -6,6 +6,37 @@ import SpotifyProvider from "next-auth/providers/spotify";
 import { AuthOptions } from "next-auth";
 import { getRecentlyPlayed } from "./spotify";
 
+async function refreshAccessToken(token: any) {
+  try {
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`,
+        ).toString("base64")}`,
+      },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken as string,
+      }),
+    });
+
+    const refreshedTokens = await response.json();
+    if (!response.ok) throw refreshedTokens;
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      expiresAt: Math.floor(Date.now() / 1000) + refreshedTokens.expires_in,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+    };
+  } catch (error) {
+    console.error("Error refreshing access token", error);
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+}
+
 export const authOptions: AuthOptions = {
   //this is how it knows to use spotify as a login method
   //clientid and clientsecret are used to verify urself to spotify
@@ -38,9 +69,13 @@ export const authOptions: AuthOptions = {
     //You grab the access token from account and save it there
     async jwt({ token, account }) {
       console.log("jwt fired, account:", !!account);
-      try {
-        if (account) {
+      // Initial sign in
+      if (account) {
+        try {
           token.accessToken = account.access_token;
+          token.refreshToken = account.refresh_token;
+          token.expiresAt = account.expires_at; // seconds since epoch
+
           const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
           for (var i = 0; i < recentlyPlayed.items.length; i++) {
             const track = recentlyPlayed.items[i].track;
@@ -66,18 +101,22 @@ export const authOptions: AuthOptions = {
             });
           }
           console.log("saved", recentlyPlayed.items.length, "tracks");
+        } catch (e) {
+          console.error("jwt callback error:", e);
         }
-      } catch (e) {
-        console.error("jwt callback error:", e);
+
+        return token;
       }
-      return token;
-    },
-    //runs whenever you call getServerSession() Takes ur accesstoken from the JWT and attaches it to the session,
-    //which is what the api reads from
-    async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
-      return session;
+
+      // Subsequent requests: token still valid, nothing to do
+      if (Date.now() < (token.expiresAt as number) * 1000) {
+        return token;
+      }
+
+      // Token has expired — refresh it
+      return refreshAccessToken(token);
     },
   },
+
   //signin -> JWT -> session
 };
