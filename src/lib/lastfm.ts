@@ -21,3 +21,24 @@ export async function getTrackTags(artist: string, track: string) {
   };
   return lastfmFetch(record);
 }
+
+export async function getSimilarArtists(artist: string) {
+  const data = await lastfmFetch({
+    method: "artist.getsimilar",
+    artist: artist,
+    limit: "5",
+  });
+
+  return data.similarartists?.artist ?? [];
+}
+
+export async function getSimilarTracks(artist: string, track: string) {
+  const data = await lastfmFetch({
+    method: "track.getsimilar",
+    artist: artist,
+    track: track,
+    limit: "5",
+  });
+
+  return data.similartracks?.track ?? [];
+}

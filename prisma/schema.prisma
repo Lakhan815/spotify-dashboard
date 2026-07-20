@@ -23,6 +23,7 @@ model User {
   createdAt DateTime @default(now())
   listeningSession ListeningSession[]
   recap Recap[]
+  recommendations Recommendation[]
 }
 
 model Track {
@@ -62,4 +63,13 @@ model Recap {
   trackCaption String
   artistCaption String
   datePosted DateTime @default(now()) @db.Timestamp(0)
+}
+
+model Recommendation {
+  id String @id
+  user User @relation(fields: [userId], references: [id])
+  userId String
+  datePosted DateTime @default(now()) @db.Timestamp(0)
+  artistRec String[]
+  trackRec String []
 }
