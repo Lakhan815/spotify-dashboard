@@ -6,6 +6,7 @@ import TopArtists from "@/components/TopArtists";
 import DurationChart from "@/components/DurationChart";
 import RecentlyPlayed from "@/components/RecentlyPlayed";
 import MoodChart from "@/components/MoodChart";
+import Recommendations from "@/components/Recommendations";
 
 export default function Dashboard() {
   const [tracks, setTracks] = useState<any[]>([]);
@@ -23,6 +24,10 @@ export default function Dashboard() {
   const [recapData, setRecapData] = useState<{
     tracksCaption: string;
     artistsCaption: string;
+  } | null>(null);
+  const [recData, setRecData] = useState<{
+    trackRec: string[];
+    artistRec: string[];
   } | null>(null);
 
   useEffect(() => {
@@ -76,6 +81,18 @@ export default function Dashboard() {
       }));
       console.log(playedData);
       setPlayedData(playedData);
+      setLoading(false);
+    }
+    fetchData();
+  }, [selection]);
+
+  useEffect(() => {
+    if (selection != "foryou") return;
+    async function fetchData() {
+      setLoading(true);
+      const response = await fetch("/api/spotify/recommendations");
+      const result = await response.json();
+      setRecData(result);
       setLoading(false);
     }
     fetchData();
@@ -141,6 +158,9 @@ export default function Dashboard() {
           <button onClick={() => setSelection("artists")} className={btnClass}>
             <span className={spanClass}>Top Artists</span>
           </button>
+          <button onClick={() => setSelection("foryou")} className={btnClass}>
+            <span className={spanClass}>For You</span>
+          </button>
           <button
             onClick={() => window.open(buildOgUrl(tracks, artists), "_blank")}
             className={btnClass}
@@ -179,6 +199,9 @@ export default function Dashboard() {
           )}
           {selection === "tracks" && <MoodChart tags={tagData} />}
           {selection === "recent" && <RecentlyPlayed tracks={playedData} />}
+          {selection === "foryou" && recData && (
+            <Recommendations recommendations={recData} />
+          )}
         </>
       )}
     </div>
