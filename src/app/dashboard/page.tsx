@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [recData, setRecData] = useState<{
     trackRec: string[];
     artistRec: string[];
+    trackRecIds: string[];
   } | null>(null);
 
   useEffect(() => {
