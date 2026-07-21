@@ -153,7 +153,7 @@ export async function GET(request: Request) {
     const trackRecIds = trackArray.map((item, i) => {
       const result = searchRes[i];
       if (result.status === "fulfilled") {
-        return result.value.tracks?.items?.[0]?.id ?? null;
+        return result.value.tracks?.items?.[0]?.id ?? "";
       }
       return null;
     });
