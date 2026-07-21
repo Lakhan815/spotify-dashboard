@@ -42,5 +42,22 @@ export async function getAudioFeatures(accessToken: string, ids: string[]) {
   );
 }
 
+export async function searchTrack(
+  accessToken: string,
+  artist: string,
+  track: string,
+) {
+  const params = new URLSearchParams({
+    q: `track:${track} artist:${artist}`,
+    type: "track",
+    limit: "1",
+  });
+
+  return spotifyFetch(
+    "https://api.spotify.com/v1/search?" + params.toString(),
+    accessToken,
+  );
+}
+
 //full map of how it works
 // Spotify sends the login token -> jwt stores it -> session callback exposes it -> getServerSession() reads it -> top-tracks passes it -> getTopTracks recieves it -> Spotify fetch uses it

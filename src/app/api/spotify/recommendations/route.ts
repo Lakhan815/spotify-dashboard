@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { getTopTracks, getTopArtists } from "@/lib/spotify";
+import { getTopTracks, getTopArtists, searchTrack } from "@/lib/spotify";
 import prisma from "@/lib/prisma";
 import { getSimilarArtists, getSimilarTracks } from "@/lib/lastfm";
 
@@ -31,6 +31,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       artistRec: existingRec.artistRec,
       trackRec: existingRec.trackRec,
+      trackRecIds: existingRec.trackRecIds,
     });
   } else {
     const tracksData = await getTopTracks(session.accessToken!, range);
@@ -126,11 +127,37 @@ export async function GET(request: Request) {
     artistArray.sort((a, b) => b.value.val - a.value.val);
     const artistRec = artistArray.map((item) => item.value.name);
 
-    const trackArray = Array.from(trackMap, ([key, value]) => ({ key, value }));
+    const trackArray = Array.from(trackMap, ([key, value]) => ({
+      key,
+      value,
+    }));
     trackArray.sort((a, b) => b.value.val - a.value.val);
+
     const trackRec = trackArray.map(
       (item) => `${item.value.trackName} — ${item.value.artistName}`,
     );
+
+    // Look up a Spotify track ID for each recommended track so the frontend
+    // can link out to "Play on Spotify" — done once here, at cache-build time,
+    // rather than on every render.
+    const searchRes = await Promise.allSettled(
+      trackArray.map((item: any) =>
+        searchTrack(
+          session.accessToken!,
+          item.value.artistName,
+          item.value.trackName,
+        ),
+      ),
+    );
+
+    const trackRecIds = trackArray.map((item, i) => {
+      const result = searchRes[i];
+      if (result.status === "fulfilled") {
+        return result.value.tracks?.items?.[0]?.id ?? null;
+      }
+      return null;
+    });
+
     const user = await prisma.user.findUnique({
       where: { email: session.user!.email! },
     });
@@ -141,12 +168,14 @@ export async function GET(request: Request) {
         userId: user!.id,
         artistRec,
         trackRec,
+        trackRecIds,
       },
     });
 
     return NextResponse.json({
       artistRec: newRecommendation.artistRec,
       trackRec: newRecommendation.trackRec,
+      trackRecIds: newRecommendation.trackRecIds,
     });
   }
 }

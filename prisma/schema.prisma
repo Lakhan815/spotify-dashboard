@@ -71,5 +71,6 @@ model Recommendation {
   userId String
   datePosted DateTime @default(now()) @db.Timestamp(0)
   artistRec String[]
-  trackRec String []
+  trackRec String[]
+  trackRecIds String[] 
 }
