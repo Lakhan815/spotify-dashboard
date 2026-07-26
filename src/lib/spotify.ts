@@ -16,7 +16,7 @@ async function spotifyPostFetch(url: string, accessToken: string, body: any) {
   const response = await fetch(url, {
     method: "POST",
     headers: {
-      authorization: "Bearer" + accessToken,
+      authorization: "Bearer " + accessToken,
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
