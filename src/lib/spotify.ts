@@ -84,10 +84,10 @@ export async function createPlaylist(
 ) {
   console.log(
     "CREATE PLAYLIST V2 CALLED",
-    "https://api.spotify.com/v1/users/" + userId + "/playlists",
+    "https://api.spotify.com/v1/me/playlists",
   );
   return spotifyPostFetch(
-    "https://api.spotify.com/v1/users/" + userId + "/playlists",
+    "https://api.spotify.com/v1/me/playlists",
     accessToken,
     body,
   );
