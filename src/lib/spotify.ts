@@ -99,7 +99,7 @@ export async function addTracksToPlaylist(
   body: any,
 ) {
   return spotifyPostFetch(
-    "https://api.spotify.com/v1/playlists/" + playlistId + "/items",
+    "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks",
     accessToken,
     body,
   );
