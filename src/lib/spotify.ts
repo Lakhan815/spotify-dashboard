@@ -11,6 +11,20 @@ async function spotifyFetch(url: string, accessToken: string, range?: string) {
   const data = await response.json();
   return data;
 }
+
+async function spotifyPostFetch(url: string, accessToken: string, body: any) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      authorization: "Bearer" + accessToken,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  return data;
+}
+
 //you get the access token from getTopTracks
 export async function getTopTracks(accessToken: string, range: string) {
   return spotifyFetch(
@@ -56,6 +70,34 @@ export async function searchTrack(
   return spotifyFetch(
     "https://api.spotify.com/v1/search?" + params.toString(),
     accessToken,
+  );
+}
+
+export async function getCurrentUser(accessToken: string) {
+  return spotifyFetch("https://api.spotify.com/v1/me", accessToken);
+}
+
+export async function createPlaylist(
+  userId: string,
+  accessToken: string,
+  body: any,
+) {
+  return spotifyPostFetch(
+    "https://api.spotify.com/users/" + userId + "/playlists",
+    accessToken,
+    body,
+  );
+}
+
+export async function addTracksToPlaylist(
+  playlistId: string,
+  accessToken: string,
+  body: any,
+) {
+  return spotifyPostFetch(
+    "https://api.spotify.com/playlists/" + playlistId + "/items",
+    accessToken,
+    body,
   );
 }
 

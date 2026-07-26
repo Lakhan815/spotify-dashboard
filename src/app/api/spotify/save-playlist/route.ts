@@ -1,0 +1,37 @@
+import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import {
+  searchTrack,
+  getCurrentUser,
+  createPlaylist,
+  addTracksToPlaylist,
+} from "@/lib/spotify";
+import prisma from "@/lib/prisma";
+
+export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (session == null) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { trackRecIds } = await request.json();
+  const validTrackIds = trackRecIds.filter((id: string) => id !== "");
+  const trackUris = validTrackIds.map((id: string) => "spotify:track:" + id);
+  const getUser = await getCurrentUser(session.accessToken!);
+  const spotifyPost = await createPlaylist(getUser.id, session.accessToken!, {
+    name: "My Recommendations",
+  });
+  const playlistPost = await addTracksToPlaylist(
+    spotifyPost.id,
+    session.accessToken!,
+    {
+      uris: trackUris,
+    },
+  );
+  return NextResponse.json({
+    playlistUrl: spotifyPost.external_urls?.spotify,
+    playlistName: spotifyPost.name,
+  });
+}

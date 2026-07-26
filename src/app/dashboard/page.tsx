@@ -30,6 +30,10 @@ export default function Dashboard() {
     artistRec: string[];
     trackRecIds: string[];
   } | null>(null);
+  const [playlistData, setPlaylistData] = useState<{
+    playlistUrl: string;
+    playlistName: string;
+  } | null>(null);
 
   useEffect(() => {
     if (selection != "tracks") return;
@@ -111,6 +115,16 @@ export default function Dashboard() {
     "relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
   const spanClass =
     "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
+
+  async function handleSavePlaylist() {
+    const response = await fetch("/api/spotify/save-playlist", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trackRecIds: recData?.trackRecIds }),
+    });
+    const result = await response.json();
+    setPlaylistData(result);
+  }
 
   function buildOgUrl(tracks: any[], artists: any[]) {
     const trackNames = tracks
@@ -202,6 +216,26 @@ export default function Dashboard() {
           {selection === "recent" && <RecentlyPlayed tracks={playedData} />}
           {selection === "foryou" && recData && (
             <Recommendations recommendations={recData} />
+          )}
+          {selection === "foryou" && (
+            <button onClick={handleSavePlaylist} className={btnClass}>
+              <span className={spanClass}>Save Playlist</span>
+            </button>
+          )}
+          {selection === "foryou" && playlistData && (
+            <div className="mb-6 px-6 py-4 rounded-lg border border-lime-400/40 bg-[#1a1a1a]">
+              <p className="text-white/90">
+                Saved to{" "}
+                <a
+                  href={playlistData.playlistUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  {playlistData.playlistName}
+                </a>
+              </p>
+            </div>
           )}
         </>
       )}
