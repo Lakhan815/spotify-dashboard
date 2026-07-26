@@ -20,9 +20,11 @@ export async function POST(request: Request) {
   const validTrackIds = trackRecIds.filter((id: string) => id !== "");
   const trackUris = validTrackIds.map((id: string) => "spotify:track:" + id);
   const getUser = await getCurrentUser(session.accessToken!);
+  console.log("getUser response:", getUser);
   const spotifyPost = await createPlaylist(getUser.id, session.accessToken!, {
     name: "My Recommendations",
   });
+  console.log("createPlaylist response:", spotifyPost);
   const playlistPost = await addTracksToPlaylist(
     spotifyPost.id,
     session.accessToken!,
