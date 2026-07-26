@@ -83,7 +83,7 @@ export async function createPlaylist(
   body: any,
 ) {
   console.log(
-    "CREATE PLAYLIST V2 CALLED",
+    "CREATE PLAYLIST V2 CALLED:",
     "https://api.spotify.com/v1/me/playlists",
   );
   return spotifyPostFetch(
