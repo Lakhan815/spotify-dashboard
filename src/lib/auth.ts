@@ -4,15 +4,52 @@ import prisma from "@/lib/prisma";
 import NextAuth from "next-auth";
 import SpotifyProvider from "next-auth/providers/spotify";
 import { AuthOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import { getRecentlyPlayed } from "./spotify";
 
+// Helper: uses the refresh_token to get a new access_token from Spotify
+// when the current one has expired. Lives outside authOptions since it's
+// just a plain helper function, not a NextAuth callback.
+async function refreshAccessToken(token: JWT) {
+  try {
+    const response = await fetch("https://accounts.spotify.com/api/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${Buffer.from(
+          `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`,
+        ).toString("base64")}`,
+      },
+      body: new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: token.refreshToken as string,
+      }),
+    });
+
+    const refreshedTokens = await response.json();
+
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
+
+    return {
+      ...token,
+      accessToken: refreshedTokens.access_token,
+      expiresAt: Math.floor(Date.now() / 1000) + refreshedTokens.expires_in,
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+    };
+  } catch (error) {
+    console.error("Error refreshing access token", error);
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
+
 export const authOptions: AuthOptions = {
-  //this is how it knows to use spotify as a login method
-  //clientid and clientsecret are used to verify urself to spotify
-  //user-top-read gives perms to read their top tracks
   providers: [
     SpotifyProvider({
-      //add exclaimation points to the end of the env ids so typescript knows it exists
       clientId: process.env.SPOTIFY_CLIENT_ID!,
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
       authorization: {
@@ -25,8 +62,6 @@ export const authOptions: AuthOptions = {
   ],
 
   callbacks: {
-    //runs right after you log in, it checks in the db to see if you are in, if you arent, it adds you, if you are, it
-    //updates ur info if need be
     async signIn({ user }) {
       await prisma.user.upsert({
         where: { id: user.id },
@@ -35,22 +70,15 @@ export const authOptions: AuthOptions = {
       });
       return true;
     },
-    //JWT(Json Web Token), Runs when it's created. It is a small encrypted packet that stores session data
-    //You grab the access token from account and save it there
+
     async jwt({ token, account }) {
-      console.log(
-        "JWT CALLBACK — expiresAt:",
-        token.expiresAt,
-        "now:",
-        Date.now(),
-        "account present:",
-        !!account,
-      );
-      console.log("jwt fired, account:", !!account);
-      try {
-        if (account) {
-          console.log("GRANTED SCOPES:", account.scope);
+      // Initial sign in — account is only populated on this first call
+      if (account) {
+        try {
           token.accessToken = account.access_token;
+          token.refreshToken = account.refresh_token;
+          token.expiresAt = account.expires_at; // seconds since epoch
+
           const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
           for (var i = 0; i < recentlyPlayed.items.length; i++) {
             const track = recentlyPlayed.items[i].track;
@@ -75,20 +103,29 @@ export const authOptions: AuthOptions = {
               },
             });
           }
-          console.log("saved", recentlyPlayed.items.length, "tracks");
+        } catch (e) {
+          console.error("jwt callback error:", e);
         }
-      } catch (e) {
-        console.error("jwt callback error:", e);
+
+        return token;
       }
 
-      return token;
+      // Subsequent requests: token still valid, nothing to do
+      if (
+        typeof token.expiresAt === "number" &&
+        Date.now() < token.expiresAt * 1000
+      ) {
+        return token;
+      }
+
+      // Token missing an expiry, or expired — refresh it
+      return refreshAccessToken(token);
     },
-    //runs whenever you call getServerSession() Takes ur accesstoken from the JWT and attaches it to the session,
-    //which is what the api reads from
+
     async session({ session, token }) {
       session.accessToken = token.accessToken as string;
+      session.error = token.error as string | undefined;
       return session;
     },
   },
-  //signin -> JWT -> session
 };
