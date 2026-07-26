@@ -25,13 +25,13 @@ export async function POST(request: Request) {
     name: "My Recommendations",
   });
   console.log("createPlaylist response:", spotifyPost);
+  console.log("trackUris:", trackUris);
   const playlistPost = await addTracksToPlaylist(
     spotifyPost.id,
     session.accessToken!,
-    {
-      uris: trackUris,
-    },
+    { uris: trackUris },
   );
+  console.log("addTracksToPlaylist response:", playlistPost);
   return NextResponse.json({
     playlistUrl: spotifyPost.external_urls?.spotify,
     playlistName: spotifyPost.name,
