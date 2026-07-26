@@ -83,7 +83,7 @@ export async function createPlaylist(
   body: any,
 ) {
   return spotifyPostFetch(
-    "https://api.spotify.com/users/" + userId + "/playlists",
+    "https://api.spotify.com/v1/users/" + userId + "/playlists",
     accessToken,
     body,
   );
@@ -95,7 +95,7 @@ export async function addTracksToPlaylist(
   body: any,
 ) {
   return spotifyPostFetch(
-    "https://api.spotify.com/playlists/" + playlistId + "/items",
+    "https://api.spotify.com/v1/playlists/" + playlistId + "/tracks",
     accessToken,
     body,
   );
