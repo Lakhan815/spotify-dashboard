@@ -105,5 +105,20 @@ export async function addTracksToPlaylist(
   );
 }
 
+export async function addTracksToPlaylistWithRetry(
+  playlistId: string,
+  accessToken: string,
+  body: any,
+  attempts = 3,
+) {
+  for (let i = 0; i < attempts; i++) {
+    const result = await addTracksToPlaylist(playlistId, accessToken, body);
+    if (!result.error) return result;
+    console.log(`addTracksToPlaylist attempt ${i + 1} failed:`, result.error);
+    await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1))); // 1s, 2s, 3s
+  }
+  return { error: { status: 403, message: "Failed after retries" } };
+}
+
 //full map of how it works
 // Spotify sends the login token -> jwt stores it -> session callback exposes it -> getServerSession() reads it -> top-tracks passes it -> getTopTracks recieves it -> Spotify fetch uses it

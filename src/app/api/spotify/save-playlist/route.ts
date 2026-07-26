@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   createPlaylist,
   addTracksToPlaylist,
+  addTracksToPlaylistWithRetry,
 } from "@/lib/spotify";
 import prisma from "@/lib/prisma";
 
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
   });
   console.log("createPlaylist response:", spotifyPost);
   console.log("trackUris:", trackUris);
-  const playlistPost = await addTracksToPlaylist(
+  const playlistPost = await addTracksToPlaylistWithRetry(
     spotifyPost.id,
     session.accessToken!,
     { uris: trackUris },
