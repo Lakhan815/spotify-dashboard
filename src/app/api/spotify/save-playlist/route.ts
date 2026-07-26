@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   if (session == null) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
+  console.log("TEMP TOKEN:", session.accessToken);
   const { trackRecIds } = await request.json();
   const validTrackIds = trackRecIds.filter((id: string) => id !== "");
   const trackUris = validTrackIds.map((id: string) => "spotify:track:" + id);
