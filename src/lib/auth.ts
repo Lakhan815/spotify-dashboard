@@ -41,6 +41,7 @@ export const authOptions: AuthOptions = {
       console.log("jwt fired, account:", !!account);
       try {
         if (account) {
+          console.log("GRANTED SCOPES:", account.scope);
           token.accessToken = account.access_token;
           const recentlyPlayed = await getRecentlyPlayed(account.access_token!);
           for (var i = 0; i < recentlyPlayed.items.length; i++) {
@@ -71,6 +72,7 @@ export const authOptions: AuthOptions = {
       } catch (e) {
         console.error("jwt callback error:", e);
       }
+
       return token;
     },
     //runs whenever you call getServerSession() Takes ur accesstoken from the JWT and attaches it to the session,
