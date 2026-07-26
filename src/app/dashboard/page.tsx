@@ -214,9 +214,6 @@ export default function Dashboard() {
           )}
           {selection === "tracks" && <MoodChart tags={tagData} />}
           {selection === "recent" && <RecentlyPlayed tracks={playedData} />}
-          {selection === "foryou" && recData && (
-            <Recommendations recommendations={recData} />
-          )}
           {selection === "foryou" && (
             <button onClick={handleSavePlaylist} className={btnClass}>
               <span className={spanClass}>Save Playlist</span>
@@ -236,6 +233,9 @@ export default function Dashboard() {
                 </a>
               </p>
             </div>
+          )}
+          {selection === "foryou" && recData && (
+            <Recommendations recommendations={recData} />
           )}
         </>
       )}
