@@ -22,6 +22,9 @@ async function spotifyPostFetch(url: string, accessToken: string, body: any) {
     body: JSON.stringify(body),
   });
   const data = await response.json();
+  if (!response.ok) {
+    console.log("SPOTIFY POST FAILED:", response.status, JSON.stringify(data));
+  }
   return data;
 }
 
