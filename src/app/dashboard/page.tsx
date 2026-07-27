@@ -214,26 +214,6 @@ export default function Dashboard() {
           )}
           {selection === "tracks" && <MoodChart tags={tagData} />}
           {selection === "recent" && <RecentlyPlayed tracks={playedData} />}
-          {selection === "foryou" && (
-            <button onClick={handleSavePlaylist} className={btnClass}>
-              <span className={spanClass}>Save Playlist</span>
-            </button>
-          )}
-          {selection === "foryou" && playlistData && (
-            <div className="mb-6 px-6 py-4 rounded-lg border border-lime-400/40 bg-[#1a1a1a]">
-              <p className="text-white/90">
-                Saved to{" "}
-                <a
-                  href={playlistData.playlistUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline"
-                >
-                  {playlistData.playlistName}
-                </a>
-              </p>
-            </div>
-          )}
           {selection === "foryou" && recData && (
             <Recommendations recommendations={recData} />
           )}
