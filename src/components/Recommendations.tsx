@@ -20,7 +20,7 @@ export default function Recommendations({ recommendations }: Props) {
           {artistRec.map((artist) => (
             <li
               key={artist}
-              className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 hover:lime-400"
+              className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10"
             >
               {artist}
             </li>
@@ -36,13 +36,14 @@ export default function Recommendations({ recommendations }: Props) {
           {trackRec.map((track, i) => (
             <li
               key={track}
-              className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10 hover:lime-400"
+              className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10"
             >
               {trackRecIds[i] ? (
                 <a
                   href={`https://open.spotify.com/track/${trackRecIds[i]}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="hover:text-lime-400 transition-colors"
                 >
                   {track}
                 </a>
