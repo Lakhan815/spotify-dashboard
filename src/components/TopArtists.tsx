@@ -1,3 +1,5 @@
+import { motion } from "motion/react";
+
 interface Artist {
   id: string;
   name: string;
@@ -9,22 +11,40 @@ interface Props {
   artists: Artist[];
 }
 
+const container = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
+};
+
 export default function TopArtists({ artists }: Props) {
   const TopArtists = artists.map((artist) => (
-    <li
+    <motion.li
       key={artist.id}
+      variants={item}
       className="flex flex-col p-2 rounded-lg border border-white/50"
     >
       <img src={artist.images?.[0]?.url} alt={artist.name} />
       <p>{artist.name}</p>
       <p>{(artist.genres || []).join(", ")}</p>
-    </li>
+    </motion.li>
   ));
   return (
     <div className="flex justify-center px-8 pt-8 ">
-      <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 rounded-lg">
+      <motion.ul
+        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 rounded-lg"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
         {TopArtists}
-      </ul>
+      </motion.ul>
     </div>
   );
 }

@@ -34,11 +34,11 @@ const item = {
   show: { opacity: 1 },
 };
 
-//actually displaying the tracks
 export default function TopTracks({ tracks }: Props) {
   const topTracks = tracks.map((track) => (
     <motion.li
       key={track.id}
+      variants={item}
       className="flex flex-col p-2 rounded-lg border border-white/50"
     >
       <img src={track.album.images?.[0]?.url} alt={track.album.name} />{" "}
@@ -50,6 +50,7 @@ export default function TopTracks({ tracks }: Props) {
     <div className="flex justify-center px-8 pt-8 ">
       <motion.ul
         className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 rounded-lg"
+        variants={container}
         initial="hidden"
         animate="show"
       >
