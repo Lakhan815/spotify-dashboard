@@ -1,3 +1,5 @@
+import { motion } from "motion/react";
+
 interface Recommendation {
   artistRec: string[];
   trackRec: string[];
@@ -8,6 +10,18 @@ interface Props {
   recommendations: Recommendation;
 }
 
+const container = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const item = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
+};
+
 export default function Recommendations({ recommendations }: Props) {
   const { artistRec, trackRec, trackRecIds } = recommendations;
   return (
@@ -16,26 +30,38 @@ export default function Recommendations({ recommendations }: Props) {
         <h2 className="text-lg font-semibold mb-3">
           Artists you should check out!
         </h2>
-        <ul className="flex flex-col gap-2">
+        <motion.ul
+          className="flex flex-col gap-2"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
           {artistRec.map((artist) => (
-            <li
+            <motion.li
               key={artist}
+              variants={item}
               className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10"
             >
               {artist}
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       </div>
 
       <div>
         <h2 className="text-lg font-semibold mb-3">
           Tracks you should check out!
         </h2>
-        <ul className="flex flex-col gap-2">
+        <motion.ul
+          className="flex flex-col gap-2"
+          variants={container}
+          initial="hidden"
+          animate="show"
+        >
           {trackRec.map((track, i) => (
-            <li
+            <motion.li
               key={track}
+              variants={item}
               className="px-4 py-2 rounded-lg bg-[#1a1a1a] border border-white/10"
             >
               {trackRecIds[i] ? (
@@ -50,9 +76,9 @@ export default function Recommendations({ recommendations }: Props) {
               ) : (
                 track
               )}
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       </div>
     </div>
   );
