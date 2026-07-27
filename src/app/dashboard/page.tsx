@@ -143,7 +143,7 @@ export default function Dashboard() {
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-nowrap overflow-x-auto">
           <button
             onClick={() => setTimeRange("short_term")}
             className={btnClass}
