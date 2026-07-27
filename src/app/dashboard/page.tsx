@@ -141,7 +141,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 bg-zinc-950 dark:bg-black">
       <div className="flex justify-between items-center mb-6">
         <div className="flex flex-wrap gap-2">
           <button
