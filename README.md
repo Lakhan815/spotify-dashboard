@@ -1,36 +1,141 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Spotify Analytics Dashboard
+
+A full-stack analytics dashboard for your Spotify listening habits — top tracks and artists, listening duration breakdowns, mood/genre analysis, AI-generated listening summaries, and Last.fm-powered recommendations.
+
+**Live demo:** [spotify-dashboard-mu.vercel.app](https://spotify-dashboard-mu.vercel.app)
+
+---
+
+## Features
+
+- **Spotify OAuth** via NextAuth.js, with a custom refresh-token flow to keep sessions alive past the ~1 hour Spotify access token lifetime
+- **Top Tracks & Artists** across configurable time ranges (last 4 weeks / 6 months / all time)
+- **Listening Duration Chart** — bar chart breakdown of total listening time per track
+- **Recently Played** — day-grouped history feed
+- **Mood & Genre Radar Chart** — tag-based mood analysis powered by Last.fm (see [Case Study](#case-study) for why this isn't built on Spotify's own audio-features endpoint)
+- **AI Listening Summaries** — daily-cached natural-language recaps of your listening activity, generated with Google Gemini
+- **"For You" Recommendations** — similar artists/tracks sourced from Last.fm, seeded from your top tracks and artists, with direct "Play on Spotify" links
+- **Shareable OG Card** — auto-generated Open Graph image card summarizing your top tracks/artists, built with `@vercel/og` on the Edge runtime
+- **Cascading entrance animations** (Framer Motion) and a custom animated landing page heading (anime.js)
+- Fully responsive, dark-themed UI styled to match Spotify's own visual language
+
+## Tech Stack
+
+| Layer            | Tech                                                             |
+| ---------------- | ---------------------------------------------------------------- |
+| Framework        | Next.js 14 (App Router), TypeScript                              |
+| Styling          | Tailwind CSS v4                                                  |
+| Auth             | NextAuth.js (Spotify OAuth)                                      |
+| Database         | PostgreSQL (Supabase) via Prisma ORM                             |
+| APIs             | Spotify Web API, Last.fm API, Google Gemini (`gemini-2.5-flash`) |
+| Charts           | Recharts                                                         |
+| Animation        | Framer Motion, anime.js                                          |
+| Image generation | `@vercel/og`                                                     |
+| Hosting          | Vercel                                                           |
+
+## Architecture
+
+```mermaid
+flowchart TD
+    User[Browser] -->|OAuth login| NextAuth[NextAuth.js]
+    NextAuth -->|access + refresh token| SpotifyAPI[Spotify Web API]
+    User -->|tab selection| Dashboard[Dashboard Page]
+    Dashboard -->|fetch| Routes[Next.js API Routes]
+    Routes --> SpotifyAPI
+    Routes --> LastFM[Last.fm API]
+    Routes --> Gemini[Google Gemini API]
+    Routes -->|read/write cache| DB[(Postgres via Prisma)]
+    Routes -->|OG image| OG[/api/og - Edge Runtime/]
+```
+
+Each dashboard tab (Top Tracks, Top Artists, Recently Played, For You) triggers its own API route, which fetches fresh data from Spotify/Last.fm/Gemini as needed and reads/writes a Postgres cache (via Prisma) for anything expensive to regenerate — AI recaps and recommendations are cached for a set window instead of recomputed on every request.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- A [Spotify Developer](https://developer.spotify.com/dashboard) app (Client ID/Secret, redirect URI configured)
+- A [Last.fm API](https://www.last.fm/api/account/create) key
+- A [Google Gemini API](https://ai.google.dev/) key
+- A Postgres database (e.g. [Supabase](https://supabase.com/))
+
+### Setup
+
+1. Clone the repo and install dependencies:
+
+   ```bash
+   git clone https://github.com/Lakhan815/spotify-dashboard.git
+   cd spotify-dashboard
+   npm install
+   ```
+
+2. Create a `.env.local` file with:
+
+   ```bash
+   SPOTIFY_CLIENT_ID=
+   SPOTIFY_CLIENT_SECRET=
+   NEXTAUTH_SECRET=
+   NEXTAUTH_URL=http://localhost:3000
+   DATABASE_URL=
+   LASTFM_API_KEY=
+   GEMINI_API_KEY=
+   ```
+
+3. Generate the Prisma client and push the schema:
+
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+4. Run the dev server:
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000).
+
+### Build
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build   # runs `npx prisma generate && next build`
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Case Study
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### The problem
 
-## Learn More
+Spotify significantly restricted its Web API for apps created after **November 2024**, and again during a **February 2026** platform migration. Several features originally planned for this project depend on endpoints that are no longer available to apps in Development Mode:
 
-To learn more about Next.js, take a look at the following resources:
+- The **Audio Features API** (`/v1/audio-features`) — needed for genre/mood analysis — now returns `403 Forbidden`.
+- The **Recommendations API** (`/v1/recommendations`) — the natural choice for a "For You" tab — is unavailable for the same reason.
+- The **30-second preview URL** field, previously returned on track objects, is no longer populated.
+- As of the February 2026 migration, **writing to playlists** (`POST /v1/playlists/{id}/tracks`) began failing with `403 Forbidden` for Development Mode apps specifically — confirmed via Spotify's developer community as a platform-side restriction, not an application bug.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Decisions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Rather than abandon these features, each restriction was diagnosed and worked around:
 
-## Deploy on Vercel
+- **Mood/genre analysis** was rebuilt on **Last.fm's tag data** instead of Spotify's audio features, feeding a Recharts radar chart.
+- **Recommendations** were rebuilt on **Last.fm's `artist.getsimilar` / `track.getsimilar`** endpoints, seeded from the user's own top tracks and artists, with deduplication and known-item filtering, then cross-referenced back to Spotify's `/v1/search` endpoint to recover playable track IDs for direct "Play on Spotify" links.
+- The **preview player** was dropped in favor of those same "Play on Spotify" links, once it was confirmed `preview_url` was unrecoverable.
+- A full **save-to-Spotify playlist pipeline** was built and correctly wired end-to-end — token refresh, playlist creation, track addition — before the `403` on adding tracks was isolated, through careful elimination (manual token/payload tests succeeded outside the app; only in-app calls failed) to a platform-side write restriction rather than a code defect. The feature was ultimately cut in favor of the simpler, working "Play on Spotify" link pattern, once further debugging confirmed the block was outside the app's control.
+- A related but separate bug was found and fixed along the way: the **NextAuth refresh-token flow had silently regressed** — only the access token was ever being persisted, so sessions were failing to refresh past their ~1 hour lifetime. This was root-caused independently of the playlist-write issue and fixed in the `jwt` callback.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Result
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+A dashboard that works within Spotify's current API constraints without silently degrading — every removed or blocked feature was replaced with a working equivalent (Last.fm-based recommendations and mood analysis, direct Spotify links instead of embedded playback) rather than left broken or hidden. The debugging process itself — separating "my code is wrong" from "the platform changed under me" — is arguably the most representative engineering work in the project.
+
+---
+
+## Roadmap
+
+Built over a 10-week self-directed project plan: OAuth and core data views, AI-generated recaps, a recommendation engine, UX polish (responsive design, animations, error/loading states), and production launch.
+
+## License
+
+MIT

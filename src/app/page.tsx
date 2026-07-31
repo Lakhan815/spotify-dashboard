@@ -65,7 +65,7 @@ export default function Home() {
         />
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row justify-center align-middle">
           {session ? (
-            <p className="flex h-12 items-center px-5 text-[#21000e] drop-shadow-[0_0_15px_#FFC0CB]">
+            <p className="flex h-12 items-center px-5 text-white">
               Signed in as {session.user?.name}!
             </p>
           ) : (
