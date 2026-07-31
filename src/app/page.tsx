@@ -10,11 +10,12 @@ import {
   splitText,
   type Scope,
 } from "animejs";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import DotField from "../components/DotField";
 import SplitText from "../components/SplitText";
 
 export default function Home() {
+  const [showDemo, setShowDemo] = useState(false);
   const root = useRef(null);
   const scope = useRef<Scope | null>(null);
   const { data: session } = useSession();
@@ -98,8 +99,47 @@ export default function Home() {
               Dashboard
             </span>
           </a>
+
+          <button
+            onClick={() => setShowDemo(true)}
+            className={btnClass + " w-full md:w-[158px]"}
+          >
+            <span
+              className={
+                spanClass +
+                " flex items-center justify-center w-full h-11 font-bold"
+              }
+            >
+              Watch Demo
+            </span>
+          </button>
         </div>
       </main>
+
+      {showDemo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setShowDemo(false)}
+        >
+          <div
+            className="relative w-full max-w-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowDemo(false)}
+              className="absolute -top-10 right-0 text-white text-2xl"
+            >
+              ✕
+            </button>
+            <video
+              src="/demo.mp4"
+              controls
+              autoPlay
+              className="w-full rounded-lg"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
