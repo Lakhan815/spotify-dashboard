@@ -12,38 +12,21 @@ import {
 } from "animejs";
 import { useEffect, useRef } from "react";
 import DotField from "../components/DotField";
+import SplitText from "../components/SplitText";
 
 export default function Home() {
   const root = useRef(null);
   const scope = useRef<Scope | null>(null);
   const { data: session } = useSession();
+  const handleAnimationComplete = () => {
+    console.log("All letters have animated!");
+  };
 
   const btnClass =
     "rounded-full relative inline-flex items-center p-0.5 overflow-hidden text-sm font-medium rounded-lg group bg-gradient-to-br from-lime-300 to-[#363636] hover:from-lime-400 hover:to-[#444]";
   const spanClass =
     "relative px-4 py-2 bg-black rounded-lg text-white group-hover:bg-transparent transition-all duration-75";
 
-  useEffect(() => {
-    if (!root.current) return;
-
-    scope.current = createScope({ root: root.current }).add((self) => {
-      const { chars } = splitText("h2", { words: false, chars: true });
-
-      animate(chars, {
-        y: [
-          { to: "-2.75rem", ease: "outExpo", duration: 600 },
-          { to: 0, ease: "outBounce", duration: 800, delay: 100 },
-        ],
-        rotate: { from: "-1turn", delay: 0 },
-        delay: stagger(50),
-        ease: "inOutCirc",
-        loopDelay: 1000,
-        loop: true,
-      });
-    });
-
-    return () => scope.current?.revert();
-  }, []);
   return (
     <div
       ref={root}
@@ -65,10 +48,21 @@ export default function Home() {
           glowColor="#363636"
         />
       </div>
-      <main className="relative z-10 flex flex-1 w-full max-w-4xl flex-col items-center justify-center gap-8 px-16">
-        <div className="large grid centered square-grid text-center align-middle font-(family-name:--font-montserrat) font-medium text-white">
-          <h2 className="text-7xl">Spotify Dashboard</h2>
-        </div>
+      <main className="relative z-10 flex flex-2 w-full max-w-9xl flex-col items-center justify-center gap-8 px-26">
+        <SplitText
+          text="Spotify Dashboard"
+          className="text-9xl font-semibold text-center"
+          delay={50}
+          duration={1.25}
+          ease="power3.out"
+          splitType="chars"
+          from={{ opacity: 0, y: 40 }}
+          to={{ opacity: 1, y: -10 }}
+          threshold={0.1}
+          rootMargin="-100px"
+          textAlign="center"
+          onLetterAnimationComplete={handleAnimationComplete}
+        />
         <div className="flex flex-col gap-4 text-base font-medium sm:flex-row justify-center align-middle">
           {session ? (
             <p className="flex h-12 items-center px-5 text-[#21000e] drop-shadow-[0_0_15px_#FFC0CB]">
@@ -83,7 +77,7 @@ export default function Home() {
               <span
                 className={
                   spanClass +
-                  " flex items-center justify-center gap-2 w-full h-11 font-(family-name:--font-montserrat)"
+                  " flex items-center justify-center gap-2 w-full h-11 font-(family-name:--font-montserrat) font-bold"
                 }
               >
                 Sign In
@@ -91,13 +85,14 @@ export default function Home() {
             </a>
           )}
           <a
-            className={btnClass + " w-full md:w-[158px]"}
+            className={btnClass + " w-full md:w-[158px] "}
             href="../dashboard"
             rel="noopener noreferrer"
           >
             <span
               className={
-                spanClass + " flex items-center justify-center w-full h-11"
+                spanClass +
+                " flex items-center justify-center w-full h-11 font-bold"
               }
             >
               Dashboard

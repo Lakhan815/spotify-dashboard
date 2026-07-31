@@ -7,6 +7,7 @@ import DurationChart from "@/components/DurationChart";
 import RecentlyPlayed from "@/components/RecentlyPlayed";
 import MoodChart from "@/components/MoodChart";
 import Recommendations from "@/components/Recommendations";
+import { stringifyError } from "next/dist/shared/lib/utils";
 
 export default function Dashboard() {
   const [tracks, setTracks] = useState<any[]>([]);
@@ -34,27 +35,39 @@ export default function Dashboard() {
     playlistUrl: string;
     playlistName: string;
   } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (selection != "tracks") return;
-    setLoading(true);
     async function fetchData() {
-      const response = await fetch(
-        "/api/spotify/top-tracks?range=" + timeRange,
-      );
-      const result = await response.json();
-      setTracks(result.items || []);
-      const durationData = (result.items || []).map((track: any) => ({
-        name: track.name,
-        duration: Math.round(track.duration_ms / 1000),
-      }));
-      setDurationData(durationData);
-      const moodResponse = await fetch("/api/spotify/mood");
-      const moodResult = await moodResponse.json();
-      console.log(moodResult);
-      setTagData(moodResult.slice(0, 8));
-      console.log(tagData);
-      setLoading(false);
+      setError(null);
+      setLoading(true);
+      try {
+        const response = await fetch(
+          "/api/spotify/top-tracks?range=" + timeRange,
+        );
+        const result = await response.json();
+        setTracks(result.items || []);
+        const durationData = (result.items || []).map((track: any) => ({
+          name: track.name,
+          duration: Math.round(track.duration_ms / 1000),
+        }));
+        setDurationData(durationData);
+        const moodResponse = await fetch("/api/spotify/mood");
+        const moodResult = await moodResponse.json();
+        console.log(moodResult);
+        setTagData(moodResult.slice(0, 8));
+        console.log(tagData);
+      } catch (err) {
+        console.error(err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Something went wrong loading this section",
+        );
+      } finally {
+        setLoading(false);
+      }
     }
     fetchData();
   }, [timeRange, selection]);
@@ -62,13 +75,24 @@ export default function Dashboard() {
   useEffect(() => {
     if (selection != "artists") return;
     async function fetchData() {
+      setError(null);
       setLoading(true);
-      const response = await fetch(
-        "/api/spotify/top-artists?range=" + timeRange,
-      );
-      const result = await response.json();
-      setArtists(result.items || []);
-      setLoading(false);
+      try {
+        const response = await fetch(
+          "/api/spotify/top-artists?range=" + timeRange,
+        );
+        const result = await response.json();
+        setArtists(result.items || []);
+      } catch (err) {
+        console.error(err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Something went wrong loading this section",
+        );
+      } finally {
+        setLoading(false);
+      }
     }
     fetchData();
   }, [timeRange, selection]);
@@ -76,17 +100,28 @@ export default function Dashboard() {
   useEffect(() => {
     if (selection != "recent") return;
     async function fetchData() {
+      setError(null);
       setLoading(true);
-      const response = await fetch("/api/spotify/recently-played");
-      const result = await response.json();
-      const playedData = (result.items || []).map((item: any) => ({
-        name: item.track.name,
-        played_at: item.played_at,
-        albumImage: item.track.album.images[0]?.url,
-      }));
-      console.log(playedData);
-      setPlayedData(playedData);
-      setLoading(false);
+      try {
+        const response = await fetch("/api/spotify/recently-played");
+        const result = await response.json();
+        const playedData = (result.items || []).map((item: any) => ({
+          name: item.track.name,
+          played_at: item.played_at,
+          albumImage: item.track.album.images[0]?.url,
+        }));
+        console.log(playedData);
+        setPlayedData(playedData);
+      } catch (err) {
+        console.error(err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Something went wrong loading this section",
+        );
+      } finally {
+        setLoading(false);
+      }
     }
     fetchData();
   }, [selection]);
@@ -94,11 +129,22 @@ export default function Dashboard() {
   useEffect(() => {
     if (selection != "foryou") return;
     async function fetchData() {
-      setLoading(true);
-      const response = await fetch("/api/spotify/recommendations");
-      const result = await response.json();
-      setRecData(result);
-      setLoading(false);
+      try {
+        setError(null);
+        setLoading(true);
+        const response = await fetch("/api/spotify/recommendations");
+        const result = await response.json();
+        setRecData(result);
+      } catch (err) {
+        console.error(err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Something went wrong loading this section",
+        );
+      } finally {
+        setLoading(false);
+      }
     }
     fetchData();
   }, [selection]);
@@ -194,6 +240,10 @@ export default function Dashboard() {
               <div className="h-3 w-2/3 bg-white/10 rounded animate-pulse" />
             </div>
           ))}
+        </div>
+      ) : error ? (
+        <div className="text-center py-12 text-white/70">
+          <p>{error}</p>
         </div>
       ) : (
         <>
