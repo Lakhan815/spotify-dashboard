@@ -50,61 +50,6 @@ flowchart TD
 
 Each dashboard tab (Top Tracks, Top Artists, Recently Played, For You) triggers its own API route, which fetches fresh data from Spotify/Last.fm/Gemini as needed and reads/writes a Postgres cache (via Prisma) for anything expensive to regenerate — AI recaps and recommendations are cached for a set window instead of recomputed on every request.
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- A [Spotify Developer](https://developer.spotify.com/dashboard) app (Client ID/Secret, redirect URI configured)
-- A [Last.fm API](https://www.last.fm/api/account/create) key
-- A [Google Gemini API](https://ai.google.dev/) key
-- A Postgres database (e.g. [Supabase](https://supabase.com/))
-
-### Setup
-
-1. Clone the repo and install dependencies:
-
-   ```bash
-   git clone https://github.com/Lakhan815/spotify-dashboard.git
-   cd spotify-dashboard
-   npm install
-   ```
-
-2. Create a `.env.local` file with:
-
-   ```bash
-   SPOTIFY_CLIENT_ID=
-   SPOTIFY_CLIENT_SECRET=
-   NEXTAUTH_SECRET=
-   NEXTAUTH_URL=http://localhost:3000
-   DATABASE_URL=
-   LASTFM_API_KEY=
-   GEMINI_API_KEY=
-   ```
-
-3. Generate the Prisma client and push the schema:
-
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-
-4. Run the dev server:
-
-   ```bash
-   npm run dev
-   ```
-
-   Open [http://localhost:3000](http://localhost:3000).
-
-### Build
-
-```bash
-npm run build   # runs `npx prisma generate && next build`
-```
-
----
-
 ## Case Study
 
 ### The problem
